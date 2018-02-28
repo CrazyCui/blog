@@ -3529,26 +3529,6 @@
     </entry>
     
     <entry>
-      <title>css选中前一个元素</title>
-      <link href="/blog/2014/04/30/previous-element-with-css/"/>
-      <content type="html"><![CDATA[<p>想了半天没找到 hack 的方式，CSS4 也没有提供类似的方法，不过在以后的草案中可能会出现</p><pre><code>!previous + next {}</code></pre><p>这样选中上一个元素，那么就可以使用</p><p>!* + obj 来选中 obj 的前一个元素了</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> css </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>git切换到远程分支</title>
       <link href="/blog/2014/04/30/switch-branch-in-git/"/>
       <content type="html"><![CDATA[<p>远程仓库 git clone 下来，当你执行 git branch，你只会看到</p><pre><code>* master</code></pre><p>并不会看到其他分支，即便远程仓库上有其他分支，使用</p><pre><code>git branch -va</code></pre><p>可以查看本地+远程分支列表</p><pre><code>* master              0840594 merge master and 1.0.0remotes/origin/1.0.0  743012a &apos;update&apos;remotes/origin/2.0.0  2787838 udpateremotes/origin/HEAD   -&gt; origin/masterremotes/origin/master 0840594 merge master and 1.0.0</code></pre><p>如果想切换到 origin/2.0.0 的分支，我们可以</p><pre><code>git branch remotes/origin/2.0.0</code></pre><p>不过结果并不如意：</p><pre><code>* (detached from origin/2.0.0)master</code></pre><p>git branch 会看到上面的信息，这里还需要一步操作：</p><pre><code>git checkout -b 2.0.0</code></pre><p>-b 的意思是 base，以当前分支为 base，新建一个名叫 2.0.0 的分支，这里当然也可以使用其他的命名。此时再执行 git branch 就能看到：</p><pre><code>$ git br  master* 2.0.0</code></pre><p>就 OK 了~</p><p>最直接的方法是：</p><pre><code>git checkout -t origin/2.0.0</code></pre><p>能够直接新建本地分支，将远程分支提取出来。</p>]]></content>
@@ -3563,6 +3543,26 @@
         <tags>
             
             <tag> git </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>css选中前一个元素</title>
+      <link href="/blog/2014/04/30/previous-element-with-css/"/>
+      <content type="html"><![CDATA[<p>想了半天没找到 hack 的方式，CSS4 也没有提供类似的方法，不过在以后的草案中可能会出现</p><pre><code>!previous + next {}</code></pre><p>这样选中上一个元素，那么就可以使用</p><p>!* + obj 来选中 obj 的前一个元素了</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> css </tag>
             
         </tags>
       
@@ -3691,6 +3691,28 @@
     </entry>
     
     <entry>
+      <title>jekyll安装不了？</title>
+      <link href="/blog/2014/04/27/ruby-jekyll-install/"/>
+      <content type="html"><![CDATA[<p>1、安装Ruby</p><pre><code>sudo apt-get install ruby1.9.1-dev</code></pre><p>2、安装Jekyll</p><pre><code>sudo gem install jekyll</code></pre><p>3、安装rake(用来可以生成markdown文件)</p><pre><code>sudo gem install rake</code></pre><p>注意几点：</p><ul><li>不是安装 ruby，而是 ruby-dev</li><li>安装 jekyll 之前应该先安装 rdoc</li></ul><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">sudo gem <span class="keyword">install</span> rdoc</span><br></pre></td></tr></table></figure><ul><li>关于gem的下载速度，查看<a href="/2014/04/27/gem-sources">这篇文章</a></li></ul>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> jekyll </tag>
+            
+            <tag> ruby </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>gem速度慢</title>
       <link href="/blog/2014/04/27/gem-sources/"/>
       <content type="html"><![CDATA[<p>删除本来的源，添加淘宝的源。</p><p>1 查看源</p><pre><code>gem sources list</code></pre><p>2 删除list中的源</p><pre><code>gem sources --remove http://rubygems.org/</code></pre><p>3 查看是否已经删除</p><pre><code>重复1,结果为空就正确</code></pre><p>4 添加淘宝的源</p><pre><code>gem sources -a http://ruby.taobao.org/</code></pre>]]></content>
@@ -3759,28 +3781,6 @@
             <tag> touchmove </tag>
             
             <tag> scroll </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>jekyll安装不了？</title>
-      <link href="/blog/2014/04/27/ruby-jekyll-install/"/>
-      <content type="html"><![CDATA[<p>1、安装Ruby</p><pre><code>sudo apt-get install ruby1.9.1-dev</code></pre><p>2、安装Jekyll</p><pre><code>sudo gem install jekyll</code></pre><p>3、安装rake(用来可以生成markdown文件)</p><pre><code>sudo gem install rake</code></pre><p>注意几点：</p><ul><li>不是安装 ruby，而是 ruby-dev</li><li>安装 jekyll 之前应该先安装 rdoc</li></ul><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">sudo gem <span class="keyword">install</span> rdoc</span><br></pre></td></tr></table></figure><ul><li>关于gem的下载速度，查看<a href="/2014/04/27/gem-sources">这篇文章</a></li></ul>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> jekyll </tag>
-            
-            <tag> ruby </tag>
             
         </tags>
       

@@ -2165,3 +2165,5 @@ $(function () {
   if (!isMobile.any() && !window.chatRoomClient && !operation.isIE() && window.location.protocol == 'http:') {
     window.chatRoomClient = new ChatRoomClient();
   }
+});
+*/
