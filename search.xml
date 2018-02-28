@@ -2393,6 +2393,30 @@
     </entry>
     
     <entry>
+      <title>Safari不认识type为search的input</title>
+      <link href="/blog/2015/04/03/input-bug-in-safari/"/>
+      <content type="html"><![CDATA[<p>我平时很少测试 safari 和 firefox，系统默认的浏览器被我设置成 chrome.</p><p>昨天切图看到个表单，没用人家写好的组件，那一层套一层的 div 看了就怕，因为不需要做什么扩展，就自己写了个。</p><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"search"</span> <span class="attr">name</span>=<span class="string">"q"</span> <span class="attr">id</span>=<span class="string">"J_Query"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure><p>给 <code>J_Query</code> 写了一些样式，可是…Safari很任性的不认，左改右改搞了五六分钟没反应，火了！</p><p>把 type 改成 text 就好了。</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> bug </tag>
+            
+            <tag> CSS </tag>
+            
+            <tag> safari </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>根据访问属性进行差异化数据加载</title>
       <link href="/blog/2015/04/03/detect-first-visit-usr/"/>
       <content type="html"><![CDATA[<p>判断用户是否第一次访问页面，先不说怎么做，想想什么场景下会用到？</p><p>如果我们页面的体积过大，用户第一次访问，会消耗大量的时间(2-5s)去下载页面所需要的资源，给用户带来的体验是很不好的，尤其是移动端的用户。如果我们可以在用户第一次访问的时候只加载主要内容，在这个主要内容中引导用户做更多的加载资源的操作，一方面可以让用户熟悉系统，一方面也给页面加载资源争取了巨量的时间，何乐而不为？！</p><p>我们能最快想到的方案是，使用 cookie ，服务器根据 cookie 的属性（如某个 Tag 的值为 1 或者 0）来判断要给用户呈现什么样的内容，这样做有几点不好：</p><ol><li>需要服务器协助，而很多时候前端对服务器的控制为 0</li><li>cookie在每次网页请求的时候都会附带，浪费 （当然，可以在用户访问一次之后清理这个 cookie，比如服务器端设置 session 值，不过又增加了后端的逻辑负担，而且不靠谱）</li><li>如果用户禁用了 cookie 呢？</li></ol><p>问题有很多，解决问题的方案也不少，针对这个问题，HTML5规范也提供了相应的事件和属性支持。</p><h3 id="如何判断用户是否为第一次访问页面"><a href="#如何判断用户是否为第一次访问页面" class="headerlink" title="如何判断用户是否为第一次访问页面"></a>如何判断用户是否为第一次访问页面</h3><p>当页面加载的时候会触发 onload 事件，完了之后触发 pageShow 事件，pageShow 事件是页面每次加载都会触发的，而 onload 不然。默认情况下，浏览器会缓存当前访问的页面（隐私模式除外，特殊处理，也会缓存，退出隐私模式时，缓存的所有内容全部删除），当用户点击前进或者后退按钮时，浏览器会从缓存中获取内容，这个时候 onload 事件是不会触发的。</p><p>可以这么说：</p><ul><li>如果待加载的页面不存在于缓存中，会触发 onload ，再触发 pageShow</li><li>如果待加载的页面存在于缓存中，不触发 onload，只触发 pageShow</li></ul><p>pageShow 事件对象 event 中有一个属性值，叫做 persisted，如果这个值为 true，则为缓存数据，false，则为第一次加载。</p><h3 id="差异化加载"><a href="#差异化加载" class="headerlink" title="差异化加载"></a>差异化加载</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> body = <span class="built_in">document</span>.body;</span><br><span class="line">body.onpageshow = <span class="function"><span class="keyword">function</span>(<span class="params">evt</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(evt.persisted)&#123;</span><br><span class="line">    <span class="comment">// 如果从缓存加载，该干啥干啥</span></span><br><span class="line">    doSomething();</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 如果用户第一次访问（没有缓存），只加载主体框架</span></span><br><span class="line">    loadMainContent();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><p>在 <code>loadMainContent()</code> 我们可以这样干：</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">funtion loadMainContent()&#123;</span><br><span class="line">  <span class="comment">// 引导用户执行操作，操作一次加载点东西</span></span><br><span class="line">  leadUserDoSomething();</span><br><span class="line">  <span class="comment">// 或者悄悄地缓慢的加载需要的数据</span></span><br><span class="line">  loadDataInQuickMode();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>当然，通过 cookie 或者 pageshow 事件属性判断用户浏览器是否有缓存数据不是最终的解决方案，但这是一种思考模式，可以发散思维~</p>]]></content>
@@ -2413,30 +2437,6 @@
             <tag> javascript </tag>
             
             <tag> first-time-visit </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>Safari不认识type为search的input</title>
-      <link href="/blog/2015/04/03/input-bug-in-safari/"/>
-      <content type="html"><![CDATA[<p>我平时很少测试 safari 和 firefox，系统默认的浏览器被我设置成 chrome.</p><p>昨天切图看到个表单，没用人家写好的组件，那一层套一层的 div 看了就怕，因为不需要做什么扩展，就自己写了个。</p><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"search"</span> <span class="attr">name</span>=<span class="string">"q"</span> <span class="attr">id</span>=<span class="string">"J_Query"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure><p>给 <code>J_Query</code> 写了一些样式，可是…Safari很任性的不认，左改右改搞了五六分钟没反应，火了！</p><p>把 type 改成 text 就好了。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> bug </tag>
-            
-            <tag> CSS </tag>
-            
-            <tag> safari </tag>
             
         </tags>
       
@@ -3713,30 +3713,6 @@
     </entry>
     
     <entry>
-      <title>gem速度慢</title>
-      <link href="/blog/2014/04/27/gem-sources/"/>
-      <content type="html"><![CDATA[<p>删除本来的源，添加淘宝的源。</p><p>1 查看源</p><pre><code>gem sources list</code></pre><p>2 删除list中的源</p><pre><code>gem sources --remove http://rubygems.org/</code></pre><p>3 查看是否已经删除</p><pre><code>重复1,结果为空就正确</code></pre><p>4 添加淘宝的源</p><pre><code>gem sources -a http://ruby.taobao.org/</code></pre>]]></content>
-      
-      <categories>
-          
-          <category> 杂物间 </category>
-          
-          <category> 网络交互 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> ruby </tag>
-            
-            <tag> gem </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>Ubuntu下Rhythmbox mp3音乐乱码</title>
       <link href="/blog/2014/04/27/filename-messy-code/"/>
       <content type="html"><![CDATA[<p>linux系统遇到点乱码问题是很正常的，你碰到的问题，别人一般会已经碰到过，甚至已经有了很好的解决方案。</p><p>今天遇到的问题是：Rhythmbox mp3音乐乱码</p><p>处理方案：</p><pre><code>sudo vim /etc/profile  # 类似 windows 下的环境变量# 添加export GST_ID3_TAG_ENCODING=GBK:UTF-8:GB18030export GST_ID3V2_TAG_ENCODING=GBK:UTF-8:GB18030</code></pre><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="//cloud.githubusercontent.com/assets/2698003/2811361/cd93a704-ce17-11e3-9b5d-a00b8c0f6c03.jpg" alt="Rhythmbox mp3音乐乱码"></p><p>重启电脑，没想到不用重启的方法，<code>source ~/.profile</code> 没效果。</p>]]></content>
@@ -3787,9 +3763,33 @@
     </entry>
     
     <entry>
-      <title>jekyll编译时报错invalid byte sequence in GBK</title>
-      <link href="/blog/2014/04/26/jekyll-error-when-compile/"/>
-      <content type="html"><![CDATA[<p>找到你的Ruby安装目录，如我的是：D:\Ruby193, 在里面找到文件D:\Ruby193\lib\ruby\gems\1.9.1\gems\jekyll-0.12.0\lib\jekyll\convertible.rb<br>在该文件中找到下面句子：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name))</code></pre><p>将它修改为：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name),:encoding=&gt;&quot;utf-8&quot;)</code></pre><p>然后确保所有带中文字符的markdown文件是无BOM的UTF-8格式即可。</p>]]></content>
+      <title>gem速度慢</title>
+      <link href="/blog/2014/04/27/gem-sources/"/>
+      <content type="html"><![CDATA[<p>删除本来的源，添加淘宝的源。</p><p>1 查看源</p><pre><code>gem sources list</code></pre><p>2 删除list中的源</p><pre><code>gem sources --remove http://rubygems.org/</code></pre><p>3 查看是否已经删除</p><pre><code>重复1,结果为空就正确</code></pre><p>4 添加淘宝的源</p><pre><code>gem sources -a http://ruby.taobao.org/</code></pre>]]></content>
+      
+      <categories>
+          
+          <category> 杂物间 </category>
+          
+          <category> 网络交互 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ruby </tag>
+            
+            <tag> gem </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>jekyll中gsub未定义的错误</title>
+      <link href="/blog/2014/04/26/gsup-error-in-atom-file/"/>
+      <content type="html"><![CDATA[<p>今天被 jekyll 编译时的一个问题搞疯了。</p><blockquote><p>Liquid Exception: undefined method `gsub’ for nil:NilClass in atom.xml</p></blockquote><p>上面这个错误，开始以为时jekyll的版本问题，后来又以为时 UIT8 编码错误，再继续折腾，看了很多博客还是没有处理好。</p><p>在 <code>atom.xml</code> 中我写了一句 ，以前一直是这样的啊，没报错。不知道 github pages 的后台 jekyll 编译器是不是做了版本或者其他方面的修改，定位到这个位置之后，把内容改成了</p><pre><code>\{\{ post.excerpt }}\{\{ post.content }} # 改成这个也可以，只是内容太多，我不喜欢</code></pre><p>差不多整了我两个小时，这么点小错误，妹的！</p>]]></content>
       
       <categories>
           
@@ -3803,32 +3803,6 @@
             <tag> error </tag>
             
             <tag> jekyll </tag>
-            
-            <tag> ruby </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>巧妙交换值</title>
-      <link href="/blog/2014/04/26/replace-a-and-b/"/>
-      <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
-      
-      <categories>
-          
-          <category> JavaScript </category>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> hack </tag>
-            
-            <tag> tips </tag>
             
         </tags>
       
@@ -3859,9 +3833,33 @@
     </entry>
     
     <entry>
-      <title>jekyll中gsub未定义的错误</title>
-      <link href="/blog/2014/04/26/gsup-error-in-atom-file/"/>
-      <content type="html"><![CDATA[<p>今天被 jekyll 编译时的一个问题搞疯了。</p><blockquote><p>Liquid Exception: undefined method `gsub’ for nil:NilClass in atom.xml</p></blockquote><p>上面这个错误，开始以为时jekyll的版本问题，后来又以为时 UIT8 编码错误，再继续折腾，看了很多博客还是没有处理好。</p><p>在 <code>atom.xml</code> 中我写了一句 ，以前一直是这样的啊，没报错。不知道 github pages 的后台 jekyll 编译器是不是做了版本或者其他方面的修改，定位到这个位置之后，把内容改成了</p><pre><code>\{\{ post.excerpt }}\{\{ post.content }} # 改成这个也可以，只是内容太多，我不喜欢</code></pre><p>差不多整了我两个小时，这么点小错误，妹的！</p>]]></content>
+      <title>巧妙交换值</title>
+      <link href="/blog/2014/04/26/replace-a-and-b/"/>
+      <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
+      
+      <categories>
+          
+          <category> JavaScript </category>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> hack </tag>
+            
+            <tag> tips </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>jekyll编译时报错invalid byte sequence in GBK</title>
+      <link href="/blog/2014/04/26/jekyll-error-when-compile/"/>
+      <content type="html"><![CDATA[<p>找到你的Ruby安装目录，如我的是：D:\Ruby193, 在里面找到文件D:\Ruby193\lib\ruby\gems\1.9.1\gems\jekyll-0.12.0\lib\jekyll\convertible.rb<br>在该文件中找到下面句子：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name))</code></pre><p>将它修改为：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name),:encoding=&gt;&quot;utf-8&quot;)</code></pre><p>然后确保所有带中文字符的markdown文件是无BOM的UTF-8格式即可。</p>]]></content>
       
       <categories>
           
@@ -3875,6 +3873,8 @@
             <tag> error </tag>
             
             <tag> jekyll </tag>
+            
+            <tag> ruby </tag>
             
         </tags>
       
@@ -4001,22 +4001,22 @@
     </entry>
     
     <entry>
-      <title>npm穿墙</title>
-      <link href="/blog/2014/03/31/npm-cross-wall/"/>
-      <content type="html"><![CDATA[<p>GWF 很给力，很多东西都能墙掉，但是把 npm 也纳入黑名单，不知道 GWFer 是怎么想的。翻墙翻了好多年了，原理其实也挺简单的，proxy 嘛！</p><h3 id="»-方法一"><a href="#»-方法一" class="headerlink" title="» 方法一"></a>» 方法一</h3><p><strong>A)</strong> 国内源，<a href="http://cnpmjs.org" target="_blank" rel="noopener">http://cnpmjs.org</a></p><p>使用方式，你可以在 cmd 中键入 <code>npm install -g cnpm</code>，然后出去吃个饭，如果还没有安装好，那就换个方式：</p><pre><code>npm install -g cnpm --registry=http://r.cnpmjs.org</code></pre><p>registry 参数的作用就是指向需要 download 的仓库。 cnpm 跟国外的 npm 是同步的，只要 npm 有更新，cnpm 就会跟着一起更新。</p><p>当然，你也可以简单点搞：</p><pre><code>npm config set registry=&quot;http://r.cnpmjs.org&quot;</code></pre><p>在配置中直接指定源头，下次就没有必要使用 <code>--registry</code> 参数了。配置好了之后，npm 就指向了国内的仓库。</p><p><strong>B)</strong> 当然，你也可以安装 cnpm，安装好了之后使用 cnpm 来下载文件，其实原理跟上面是一样的，于是你就可以这样了：</p><pre><code>cnpm install -g package_name</code></pre><h3 id="»-方法二"><a href="#»-方法二" class="headerlink" title="» 方法二"></a>» 方法二</h3><p>代理，在配置中设置代理参数：</p><pre><code># 全局路径，也就是 npm install -g，这里 -g 的意义npm config set prefix=&quot;c:\nodejs&quot;# 一般使用 goagent 翻墙，他的默认端口是 8087npm config set proxy=http://127.0.0.1:8087# 设置 https 的代理npm config set https_proxy=http://127.0.0.1:8087# 这个地方记得设置下，别搞了个代理，结果在国内源下载npm config set registry=http://registry.npmjs.org</code></pre><p>这样配置好了之后，打开你的 goagent ，记得一定要打开，不然 npm 必然报错。上面写了一堆，其实没必要跟着写这么多，一句话就可以搞定：</p><pre><code>npm config set proxy=http://127.0.0.1:8087</code></pre><p>为啥呢，npm -g 没必要自己去配置， registry 默认就是 <code>http://registry.npmjs.org</code>，不配置 https_proxy，也走的通，所以就只剩下上面这条命令了。</p><h3 id="»-方法三"><a href="#»-方法三" class="headerlink" title="» 方法三"></a>» 方法三</h3><p>直接下载到本地。</p><p>实在是怕麻烦，就直接把文件 download 下来，然后放到 node_module 之中就行了。如果是全局模块，找到全局 node_module 的位置，然后解压放进去就行了。</p>]]></content>
+      <title>webview中的点击高亮问题</title>
+      <link href="/blog/2014/03/31/tap-highlight-in-webview/"/>
+      <content type="html"><![CDATA[<p>这两天在做一个淘金币的小游戏，测试页面的时候还挺正常的，放到webview（嵌入诸如微信、微博等客户端的网页容器）中就出问题了。</p><p>给元素绑定了一个 tap 事件，点击元素，该元素周边会出现点东西，IOS 中是个半透明的灰色背景，在 android 中出现红色的边框，不仅影响美感，貌似还会影响性能（这点东西渲染出来需要时间，会阻塞 JS 中控制的元素渲染）。</p><p>开始本以为使用 user-select 可以干掉这玩意儿，结果无效，网上寻觅半天之后，找到了问题。</p><p>css 中有个属性叫做 -webkit-tap-highlight-color ，顾名思义，就是点击元素的时候会有一个高亮的效果。当然不能把他称之为 bug，这也是浏览器为了让用户知道你点中了某个东西，给他醒目的提示，算是增强体验，但是在一些场景中，这不仅没有增强体验，还会影响体验。</p><p>解决方案：</p><pre><code>.obj {-webkit-tap-highlight-color:rgba(0,0,0,0);}</code></pre><p>有些机子可能比较坑爹，rgba 这种方式支持的不是很好，我们可以用 transparent 来给他透明化。</p><pre><code>.obj {  -webkit-tap-highlight-color: rgba(0,0,0,0);  -webkit-tap-highlight-color: transparent; /* For some Androids */}</code></pre><p>小小分享。</p>]]></content>
       
       <categories>
           
-          <category> 网络交互 </category>
+          <category> 前端杂烩 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> npm </tag>
+            <tag> webview </tag>
             
-            <tag> proxy </tag>
+            <tag> highlight </tag>
             
         </tags>
       
@@ -4043,22 +4043,22 @@
     </entry>
     
     <entry>
-      <title>webview中的点击高亮问题</title>
-      <link href="/blog/2014/03/31/tap-highlight-in-webview/"/>
-      <content type="html"><![CDATA[<p>这两天在做一个淘金币的小游戏，测试页面的时候还挺正常的，放到webview（嵌入诸如微信、微博等客户端的网页容器）中就出问题了。</p><p>给元素绑定了一个 tap 事件，点击元素，该元素周边会出现点东西，IOS 中是个半透明的灰色背景，在 android 中出现红色的边框，不仅影响美感，貌似还会影响性能（这点东西渲染出来需要时间，会阻塞 JS 中控制的元素渲染）。</p><p>开始本以为使用 user-select 可以干掉这玩意儿，结果无效，网上寻觅半天之后，找到了问题。</p><p>css 中有个属性叫做 -webkit-tap-highlight-color ，顾名思义，就是点击元素的时候会有一个高亮的效果。当然不能把他称之为 bug，这也是浏览器为了让用户知道你点中了某个东西，给他醒目的提示，算是增强体验，但是在一些场景中，这不仅没有增强体验，还会影响体验。</p><p>解决方案：</p><pre><code>.obj {-webkit-tap-highlight-color:rgba(0,0,0,0);}</code></pre><p>有些机子可能比较坑爹，rgba 这种方式支持的不是很好，我们可以用 transparent 来给他透明化。</p><pre><code>.obj {  -webkit-tap-highlight-color: rgba(0,0,0,0);  -webkit-tap-highlight-color: transparent; /* For some Androids */}</code></pre><p>小小分享。</p>]]></content>
+      <title>npm穿墙</title>
+      <link href="/blog/2014/03/31/npm-cross-wall/"/>
+      <content type="html"><![CDATA[<p>GWF 很给力，很多东西都能墙掉，但是把 npm 也纳入黑名单，不知道 GWFer 是怎么想的。翻墙翻了好多年了，原理其实也挺简单的，proxy 嘛！</p><h3 id="»-方法一"><a href="#»-方法一" class="headerlink" title="» 方法一"></a>» 方法一</h3><p><strong>A)</strong> 国内源，<a href="http://cnpmjs.org" target="_blank" rel="noopener">http://cnpmjs.org</a></p><p>使用方式，你可以在 cmd 中键入 <code>npm install -g cnpm</code>，然后出去吃个饭，如果还没有安装好，那就换个方式：</p><pre><code>npm install -g cnpm --registry=http://r.cnpmjs.org</code></pre><p>registry 参数的作用就是指向需要 download 的仓库。 cnpm 跟国外的 npm 是同步的，只要 npm 有更新，cnpm 就会跟着一起更新。</p><p>当然，你也可以简单点搞：</p><pre><code>npm config set registry=&quot;http://r.cnpmjs.org&quot;</code></pre><p>在配置中直接指定源头，下次就没有必要使用 <code>--registry</code> 参数了。配置好了之后，npm 就指向了国内的仓库。</p><p><strong>B)</strong> 当然，你也可以安装 cnpm，安装好了之后使用 cnpm 来下载文件，其实原理跟上面是一样的，于是你就可以这样了：</p><pre><code>cnpm install -g package_name</code></pre><h3 id="»-方法二"><a href="#»-方法二" class="headerlink" title="» 方法二"></a>» 方法二</h3><p>代理，在配置中设置代理参数：</p><pre><code># 全局路径，也就是 npm install -g，这里 -g 的意义npm config set prefix=&quot;c:\nodejs&quot;# 一般使用 goagent 翻墙，他的默认端口是 8087npm config set proxy=http://127.0.0.1:8087# 设置 https 的代理npm config set https_proxy=http://127.0.0.1:8087# 这个地方记得设置下，别搞了个代理，结果在国内源下载npm config set registry=http://registry.npmjs.org</code></pre><p>这样配置好了之后，打开你的 goagent ，记得一定要打开，不然 npm 必然报错。上面写了一堆，其实没必要跟着写这么多，一句话就可以搞定：</p><pre><code>npm config set proxy=http://127.0.0.1:8087</code></pre><p>为啥呢，npm -g 没必要自己去配置， registry 默认就是 <code>http://registry.npmjs.org</code>，不配置 https_proxy，也走的通，所以就只剩下上面这条命令了。</p><h3 id="»-方法三"><a href="#»-方法三" class="headerlink" title="» 方法三"></a>» 方法三</h3><p>直接下载到本地。</p><p>实在是怕麻烦，就直接把文件 download 下来，然后放到 node_module 之中就行了。如果是全局模块，找到全局 node_module 的位置，然后解压放进去就行了。</p>]]></content>
       
       <categories>
           
-          <category> 前端杂烩 </category>
+          <category> 网络交互 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> webview </tag>
+            <tag> npm </tag>
             
-            <tag> highlight </tag>
+            <tag> proxy </tag>
             
         </tags>
       
