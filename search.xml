@@ -2393,30 +2393,6 @@
     </entry>
     
     <entry>
-      <title>Safari不认识type为search的input</title>
-      <link href="/blog/2015/04/03/input-bug-in-safari/"/>
-      <content type="html"><![CDATA[<p>我平时很少测试 safari 和 firefox，系统默认的浏览器被我设置成 chrome.</p><p>昨天切图看到个表单，没用人家写好的组件，那一层套一层的 div 看了就怕，因为不需要做什么扩展，就自己写了个。</p><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"search"</span> <span class="attr">name</span>=<span class="string">"q"</span> <span class="attr">id</span>=<span class="string">"J_Query"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure><p>给 <code>J_Query</code> 写了一些样式，可是…Safari很任性的不认，左改右改搞了五六分钟没反应，火了！</p><p>把 type 改成 text 就好了。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> bug </tag>
-            
-            <tag> CSS </tag>
-            
-            <tag> safari </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>根据访问属性进行差异化数据加载</title>
       <link href="/blog/2015/04/03/detect-first-visit-usr/"/>
       <content type="html"><![CDATA[<p>判断用户是否第一次访问页面，先不说怎么做，想想什么场景下会用到？</p><p>如果我们页面的体积过大，用户第一次访问，会消耗大量的时间(2-5s)去下载页面所需要的资源，给用户带来的体验是很不好的，尤其是移动端的用户。如果我们可以在用户第一次访问的时候只加载主要内容，在这个主要内容中引导用户做更多的加载资源的操作，一方面可以让用户熟悉系统，一方面也给页面加载资源争取了巨量的时间，何乐而不为？！</p><p>我们能最快想到的方案是，使用 cookie ，服务器根据 cookie 的属性（如某个 Tag 的值为 1 或者 0）来判断要给用户呈现什么样的内容，这样做有几点不好：</p><ol><li>需要服务器协助，而很多时候前端对服务器的控制为 0</li><li>cookie在每次网页请求的时候都会附带，浪费 （当然，可以在用户访问一次之后清理这个 cookie，比如服务器端设置 session 值，不过又增加了后端的逻辑负担，而且不靠谱）</li><li>如果用户禁用了 cookie 呢？</li></ol><p>问题有很多，解决问题的方案也不少，针对这个问题，HTML5规范也提供了相应的事件和属性支持。</p><h3 id="如何判断用户是否为第一次访问页面"><a href="#如何判断用户是否为第一次访问页面" class="headerlink" title="如何判断用户是否为第一次访问页面"></a>如何判断用户是否为第一次访问页面</h3><p>当页面加载的时候会触发 onload 事件，完了之后触发 pageShow 事件，pageShow 事件是页面每次加载都会触发的，而 onload 不然。默认情况下，浏览器会缓存当前访问的页面（隐私模式除外，特殊处理，也会缓存，退出隐私模式时，缓存的所有内容全部删除），当用户点击前进或者后退按钮时，浏览器会从缓存中获取内容，这个时候 onload 事件是不会触发的。</p><p>可以这么说：</p><ul><li>如果待加载的页面不存在于缓存中，会触发 onload ，再触发 pageShow</li><li>如果待加载的页面存在于缓存中，不触发 onload，只触发 pageShow</li></ul><p>pageShow 事件对象 event 中有一个属性值，叫做 persisted，如果这个值为 true，则为缓存数据，false，则为第一次加载。</p><h3 id="差异化加载"><a href="#差异化加载" class="headerlink" title="差异化加载"></a>差异化加载</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> body = <span class="built_in">document</span>.body;</span><br><span class="line">body.onpageshow = <span class="function"><span class="keyword">function</span>(<span class="params">evt</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(evt.persisted)&#123;</span><br><span class="line">    <span class="comment">// 如果从缓存加载，该干啥干啥</span></span><br><span class="line">    doSomething();</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 如果用户第一次访问（没有缓存），只加载主体框架</span></span><br><span class="line">    loadMainContent();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><p>在 <code>loadMainContent()</code> 我们可以这样干：</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">funtion loadMainContent()&#123;</span><br><span class="line">  <span class="comment">// 引导用户执行操作，操作一次加载点东西</span></span><br><span class="line">  leadUserDoSomething();</span><br><span class="line">  <span class="comment">// 或者悄悄地缓慢的加载需要的数据</span></span><br><span class="line">  loadDataInQuickMode();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>当然，通过 cookie 或者 pageshow 事件属性判断用户浏览器是否有缓存数据不是最终的解决方案，但这是一种思考模式，可以发散思维~</p>]]></content>
@@ -2437,6 +2413,30 @@
             <tag> javascript </tag>
             
             <tag> first-time-visit </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Safari不认识type为search的input</title>
+      <link href="/blog/2015/04/03/input-bug-in-safari/"/>
+      <content type="html"><![CDATA[<p>我平时很少测试 safari 和 firefox，系统默认的浏览器被我设置成 chrome.</p><p>昨天切图看到个表单，没用人家写好的组件，那一层套一层的 div 看了就怕，因为不需要做什么扩展，就自己写了个。</p><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"search"</span> <span class="attr">name</span>=<span class="string">"q"</span> <span class="attr">id</span>=<span class="string">"J_Query"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure><p>给 <code>J_Query</code> 写了一些样式，可是…Safari很任性的不认，左改右改搞了五六分钟没反应，火了！</p><p>把 type 改成 text 就好了。</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> bug </tag>
+            
+            <tag> CSS </tag>
+            
+            <tag> safari </tag>
             
         </tags>
       
@@ -3131,26 +3131,6 @@
     </entry>
     
     <entry>
-      <title>￥符号，少了一横</title>
-      <link href="/blog/2014/08/29/dollar-in-different-face/"/>
-      <content type="html"><![CDATA[<p>跟钱有关的问题。</p><p>数值前加一个 ￥ 符号，可是视觉同学一定要使用两横的 dollar 符号。咋弄？</p><p>这个符号在不同字体下呈现的效果是不一样的，微软雅黑下是两横，不过显示的并不好看，正确的处理方式应该是：</p><pre><code>&lt;style&gt;i {font-family:&quot;Microsoft Yahei&quot;;}&lt;/style&gt;&lt;i&gt;&amp;yen;&lt;/i&gt;</code></pre>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> css </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>评《别太听上司的话》</title>
       <link href="/blog/2014/08/29/be-patient/"/>
       <content type="html"><![CDATA[<p>今天早上逛博客园，看到了一篇吐槽的文章：<a href="http://www.cnblogs.com/beatless/p/3944101.html" target="_blank" rel="noopener">别太听上司的话</a>，有些感触：</p><p>给你加任务的，可以称之为需求方。在需求方看来，无论你是前端开发还是后台开发，广义上讲，都是资源，有需求当然也是需要资源的。</p><p>每一个需求过来都应该进行评审，需求方不提，你自己也没有提出来，他们觉得加一点东西或者改一点东西是十分轻松的事情，因为他们不懂技术，可是你懂呀，你需要把排期和难点罗列出来，给出一个相对准确的项目时间，这有啥难度么？</p><p>能力强不等于无敌，有些人会说能力越强责任越重，你可以认为这是忽悠你的借口，不过这也是事实，当你的技术能力和业务能力持平之后，你的工资和职衔也就上去了。</p><p>你说一两年学到的东西还不如两个月的，显然，你指的是技术方面。想必楼主是一个沉醉于技术的人，但是在工作中，技术只是一方面，或许学会做人才是最重要的。</p><p>我也经常会遭遇楼主这样的经历，每每过来都是忍气吞声，但是每一次我都试着去坦然去面对，当然提高了自己跟人 PK 的能力。</p><p>所以，加油吧！</p>]]></content>
@@ -3167,6 +3147,26 @@
             <tag> life </tag>
             
             <tag> work </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>￥符号，少了一横</title>
+      <link href="/blog/2014/08/29/dollar-in-different-face/"/>
+      <content type="html"><![CDATA[<p>跟钱有关的问题。</p><p>数值前加一个 ￥ 符号，可是视觉同学一定要使用两横的 dollar 符号。咋弄？</p><p>这个符号在不同字体下呈现的效果是不一样的，微软雅黑下是两横，不过显示的并不好看，正确的处理方式应该是：</p><pre><code>&lt;style&gt;i {font-family:&quot;Microsoft Yahei&quot;;}&lt;/style&gt;&lt;i&gt;&amp;yen;&lt;/i&gt;</code></pre>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> css </tag>
             
         </tags>
       
@@ -3569,6 +3569,28 @@
     </entry>
     
     <entry>
+      <title>mysqldump的使用</title>
+      <link href="/blog/2014/04/29/useage-of-mysqldump/"/>
+      <content type="html"><![CDATA[<ol><li><p>导出整个数据库<br>mysqldump -u 用户名 -p 数据库名 &gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc &gt; wcnc.sql</code></pre></li><li><p>导出一个表<br>mysqldump -u 用户名 -p 数据库名 表名&gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc users&gt; wcnc_users.sql</code></pre></li><li><p>导出一个数据库结构</p><pre><code>mysqldump -u wcnc -p -d --add-drop-table smgp_apps_wcnc &gt;d:\wcnc_db.sql</code></pre><p>-d 没有数据 –add-drop-table 在每个create语句之前增加一个drop table</p></li><li><p>导入数据库<br>常用source 命令<br>进入mysql数据库控制台，<br>如mysql -u root -p</p><p>mysql&gt;use 数据库<br>然后使用source命令，后面参数为脚本文件（如这里用到的.sql）</p><pre><code>mysql&gt;source d:\wcnc_db.sql</code></pre></li></ol>]]></content>
+      
+      <categories>
+          
+          <category> 后端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+            <tag> mysqldump </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>解析URL到对应的Object</title>
       <link href="/blog/2014/04/29/reverse-string-to-object/"/>
       <content type="html"><![CDATA[<p>将 URL 中对象解析出来：</p><pre><code>var a=&apos;account.type=1&amp;account.id=&amp;account.dependFlag=0&amp;account.card.companyId=1&amp;account.name=%E4%B8%AD%E9%93%B6VISA%E5%8D%A1&amp;account.hidden=&amp;account.card.cardNo=&amp;account.moneyTypeId=0&amp;account.card.billDay=1&amp;account.card.repayType=0&amp;account.card.repayDay=20&amp;account.card.alert=2&amp;account.comment=%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D&apos;;var root={};a.split(&apos;&amp;&apos;).sort().map(function(s){    var p=root;    s.match(/(.+?)(?:\.|=)/g).map(function(ss){        var t=ss.slice(0,-1);        p[t]=p[t]||((ss.slice(-1)===&apos;=&apos;)?decodeURIComponent(s.match(/=(.*)$/)[1]):{});        p=p[t];    });});console.log(root);</code></pre><p>以上是网友的答案，我暂时没想到更好的算法。</p>]]></content>
@@ -3587,28 +3609,6 @@
             <tag> JavaScript </tag>
             
             <tag> 解析 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>mysqldump的使用</title>
-      <link href="/blog/2014/04/29/useage-of-mysqldump/"/>
-      <content type="html"><![CDATA[<ol><li><p>导出整个数据库<br>mysqldump -u 用户名 -p 数据库名 &gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc &gt; wcnc.sql</code></pre></li><li><p>导出一个表<br>mysqldump -u 用户名 -p 数据库名 表名&gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc users&gt; wcnc_users.sql</code></pre></li><li><p>导出一个数据库结构</p><pre><code>mysqldump -u wcnc -p -d --add-drop-table smgp_apps_wcnc &gt;d:\wcnc_db.sql</code></pre><p>-d 没有数据 –add-drop-table 在每个create语句之前增加一个drop table</p></li><li><p>导入数据库<br>常用source 命令<br>进入mysql数据库控制台，<br>如mysql -u root -p</p><p>mysql&gt;use 数据库<br>然后使用source命令，后面参数为脚本文件（如这里用到的.sql）</p><pre><code>mysql&gt;source d:\wcnc_db.sql</code></pre></li></ol>]]></content>
-      
-      <categories>
-          
-          <category> 后端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> mysql </tag>
-            
-            <tag> mysqldump </tag>
             
         </tags>
       
@@ -3833,30 +3833,6 @@
     </entry>
     
     <entry>
-      <title>巧妙交换值</title>
-      <link href="/blog/2014/04/26/replace-a-and-b/"/>
-      <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
-      
-      <categories>
-          
-          <category> JavaScript </category>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> hack </tag>
-            
-            <tag> tips </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>clip的安装和使用</title>
       <link href="/blog/2014/04/26/clip-in-sys/"/>
       <content type="html"><![CDATA[<p>很多情况下我们需要复制整个文件的内容，然后粘贴到其他地方，像我这种命令行控，文件操作基本都是命令行处理的，平时会用 vim 打开文件，然后</p><pre><code>vim FILE # 打开文件ggVG # 全选内容&quot;+y  # 复制到系统缓冲区</code></pre><p>说实话，这真的很麻烦，其实我们可以这样：</p><pre><code># windows用户clip &lt; FILEecho &quot;content&quot; | clip# linux用户xclip -sel clip &lt; FILE</code></pre><p>省去了打开文件复制的过程。</p>]]></content>
@@ -3875,6 +3851,30 @@
             <tag> tips </tag>
             
             <tag> clip </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>巧妙交换值</title>
+      <link href="/blog/2014/04/26/replace-a-and-b/"/>
+      <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
+      
+      <categories>
+          
+          <category> JavaScript </category>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> hack </tag>
+            
+            <tag> tips </tag>
             
         </tags>
       
