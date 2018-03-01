@@ -3,6 +3,28 @@
   
     
     <entry>
+      <title>陪伴</title>
+      <link href="/blog/2018/03/01/%E9%99%AA%E4%BC%B4/"/>
+      <content type="html"><![CDATA[<p>正值初春，不到七点夜幕就被揪了下来，窗户已挂上了一层宁静的夜色。</p><p>“都过了晚饭时间了，怎么还没回来。”，她心里嘀咕着。</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/03/01/陪伴.png" alt="图自https://gfamily.cwgv.com.tw/public/upload/articles/98/998/preview/998.png"></p><p>子涵是一家互联网公司的员工，每天忙到三餐只顾得上早餐，还是老婆给准备的，这不，今天又把晚饭时间贡献给了业务。每到饭点，子涵的老婆夏月就会给他打一个电话，真切地问清楚，到底吃了没。</p><p>南方的天气过了冬便开始古怪起来，白天太阳晒得人懒洋洋的，到了夜里就凉飕飕，门缝还时不时吹响口哨。一间小室，一个人，还是显得太大了。</p><p>六点多，子涵的手机拨进过一个电话，震动响起时，子涵正皱着眉头盯着电脑屏幕，左手伸过去准备取手机，一条消息弹了出来，又把手收了回来；键盘敲下几个字后，案头的震动声没了，就把这事儿给忘了。那是夏月打过来的，家里的做好的饭菜都快凉了。</p><p>“什么？还要改！这个地方都改了三遍了，能不能悠着点啊…”，子涵在电话里吼了起来，“确定的部分就不要再改了，没确定的部分先别提过来，咱们尽量把有限的时间投在有价值的事情上，生命太短暂！”。项目室内一直弥漫着紧张的气息，有点让人喘不过气来。这个项目的需求是倒推着时间来的，上线节奏早就定好了，大家都很无奈。</p><p>电脑上飘出一条消息，“不要你了！（来自老婆）”，子涵瞟了一眼，点击了关闭，继续埋头敲打着键盘。</p><p>今天是周五，子涵本来答应了早点回家吃饭的，不过看今天的情形是有点够呛了。点开微信，回复了一句：“你先吃吧。” 回车键刚按下，夏月就发来了一条新消息：“等你。”</p><p>（未完待续）</p><hr><p>题图：<a href="https://gfamily.cwgv.com.tw/public/upload/articles/98/998/preview/998.png" target="_blank" rel="noopener">https://gfamily.cwgv.com.tw/public/upload/articles/98/998/preview/998.png</a></p>]]></content>
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 观点和想法 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 陪伴 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>有点强迫症的程序员</title>
       <link href="/blog/2018/02/27/%E6%9C%89%E7%82%B9%E5%BC%BA%E8%BF%AB%E7%97%87%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98/"/>
       <content type="html"><![CDATA[<p>宪法修改提案事件在网络上沸沸扬扬，没怎么凑热闹，也不打算（bù gǎn）凑热闹了，还是安安静静地在自留地写点东西好了。</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/02/27/强迫症.png" alt="图自：http://cdn.kickvick.com/wp-content/uploads/2015/07/ocd-imperfection-05.jpg"></p><p>工作时不时需要打开别人的仓库，看到好的代码会精神振奋，上下翻动之余内心也会不停地发出由衷的赞叹，而看到乱糟糟的代码，嘴里就只剩下唏嘘了。一眼扫下去如何判定代码是好是坏呢？大致感觉是这样：</p><ul><li>首先会看基本面，空行是不是工整一致，注释是否清晰，行文是否流畅，上下逻辑是否连贯，好的代码一定会看着特别舒服；</li><li>然后就是细节啦，看过有代码洁癖的 PHP 程序员写的代码，他们对变量命名、逻辑判断先后顺序、函数分段等各方面都有着自己的思考，那种代码用「优美」来形容完全不过分！</li><li>最后才是代码逻辑，逻辑是整个代码结构设计的核心，它表达出来的是作者的思想。</li></ul><p>程序员的信仰是什么？我觉得就是<strong>逻辑</strong>。因为这个信仰，我们可以坚定地告诉别人，这里是正确的，或者这里是错误的。</p><p>我相信很多程序员会不止一次地阅读自己的代（zuò）码（pǐn），有时候想到一个简洁的表达方式，会很激动地删掉一堆冗余逻辑，用几行精简的逻辑替换掉，而且内心还会洋溢着分享的冲动。程序员们在这种习惯中无数次地薰陶后，强迫症自然也就来了。</p><ul><li>电脑桌面的文件夹必须放在第 2 排第 1 个位置，因为更好找</li><li>结婚照必须斜交 45° 对着沙发</li><li>书桌上水杯一定要摆在右手边 30cm 的位置</li></ul><p>生活中会不断地挖掘对称美的地方，而且一定会想尽办法减少重复的工作。<strong>仿佛生活就是编码，逻辑贯穿其中。</strong></p><p>强迫症会让人做出一些看似不可思议的事情，这是强迫症者的生活哲学。他们可以为了偷懒，让自己比平时更忙；他们宁愿丧失部分质量，也不愿意牺牲心中的美；他们钟爱变化，会一直在平淡的生活中寻找趣味的内容。他们是可爱的人。</p><hr><p>题图：<a href="http://cdn.kickvick.com/wp-content/uploads/2015/07/ocd-imperfection-05.jpg" target="_blank" rel="noopener">http://cdn.kickvick.com/wp-content/uploads/2015/07/ocd-imperfection-05.jpg</a></p>]]></content>
@@ -1128,9 +1150,9 @@
       
         <tags>
             
-            <tag> 个性化 </tag>
-            
             <tag> 淘宝首页 </tag>
+            
+            <tag> 个性化 </tag>
             
         </tags>
       
@@ -3131,26 +3153,6 @@
     </entry>
     
     <entry>
-      <title>￥符号，少了一横</title>
-      <link href="/blog/2014/08/29/dollar-in-different-face/"/>
-      <content type="html"><![CDATA[<p>跟钱有关的问题。</p><p>数值前加一个 ￥ 符号，可是视觉同学一定要使用两横的 dollar 符号。咋弄？</p><p>这个符号在不同字体下呈现的效果是不一样的，微软雅黑下是两横，不过显示的并不好看，正确的处理方式应该是：</p><pre><code>&lt;style&gt;i {font-family:&quot;Microsoft Yahei&quot;;}&lt;/style&gt;&lt;i&gt;&amp;yen;&lt;/i&gt;</code></pre>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> css </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>评《别太听上司的话》</title>
       <link href="/blog/2014/08/29/be-patient/"/>
       <content type="html"><![CDATA[<p>今天早上逛博客园，看到了一篇吐槽的文章：<a href="http://www.cnblogs.com/beatless/p/3944101.html" target="_blank" rel="noopener">别太听上司的话</a>，有些感触：</p><p>给你加任务的，可以称之为需求方。在需求方看来，无论你是前端开发还是后台开发，广义上讲，都是资源，有需求当然也是需要资源的。</p><p>每一个需求过来都应该进行评审，需求方不提，你自己也没有提出来，他们觉得加一点东西或者改一点东西是十分轻松的事情，因为他们不懂技术，可是你懂呀，你需要把排期和难点罗列出来，给出一个相对准确的项目时间，这有啥难度么？</p><p>能力强不等于无敌，有些人会说能力越强责任越重，你可以认为这是忽悠你的借口，不过这也是事实，当你的技术能力和业务能力持平之后，你的工资和职衔也就上去了。</p><p>你说一两年学到的东西还不如两个月的，显然，你指的是技术方面。想必楼主是一个沉醉于技术的人，但是在工作中，技术只是一方面，或许学会做人才是最重要的。</p><p>我也经常会遭遇楼主这样的经历，每每过来都是忍气吞声，但是每一次我都试着去坦然去面对，当然提高了自己跟人 PK 的能力。</p><p>所以，加油吧！</p>]]></content>
@@ -3167,6 +3169,26 @@
             <tag> life </tag>
             
             <tag> work </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>￥符号，少了一横</title>
+      <link href="/blog/2014/08/29/dollar-in-different-face/"/>
+      <content type="html"><![CDATA[<p>跟钱有关的问题。</p><p>数值前加一个 ￥ 符号，可是视觉同学一定要使用两横的 dollar 符号。咋弄？</p><p>这个符号在不同字体下呈现的效果是不一样的，微软雅黑下是两横，不过显示的并不好看，正确的处理方式应该是：</p><pre><code>&lt;style&gt;i {font-family:&quot;Microsoft Yahei&quot;;}&lt;/style&gt;&lt;i&gt;&amp;yen;&lt;/i&gt;</code></pre>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> css </tag>
             
         </tags>
       
@@ -3569,28 +3591,6 @@
     </entry>
     
     <entry>
-      <title>mysqldump的使用</title>
-      <link href="/blog/2014/04/29/useage-of-mysqldump/"/>
-      <content type="html"><![CDATA[<ol><li><p>导出整个数据库<br>mysqldump -u 用户名 -p 数据库名 &gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc &gt; wcnc.sql</code></pre></li><li><p>导出一个表<br>mysqldump -u 用户名 -p 数据库名 表名&gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc users&gt; wcnc_users.sql</code></pre></li><li><p>导出一个数据库结构</p><pre><code>mysqldump -u wcnc -p -d --add-drop-table smgp_apps_wcnc &gt;d:\wcnc_db.sql</code></pre><p>-d 没有数据 –add-drop-table 在每个create语句之前增加一个drop table</p></li><li><p>导入数据库<br>常用source 命令<br>进入mysql数据库控制台，<br>如mysql -u root -p</p><p>mysql&gt;use 数据库<br>然后使用source命令，后面参数为脚本文件（如这里用到的.sql）</p><pre><code>mysql&gt;source d:\wcnc_db.sql</code></pre></li></ol>]]></content>
-      
-      <categories>
-          
-          <category> 后端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> mysql </tag>
-            
-            <tag> mysqldump </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>解析URL到对应的Object</title>
       <link href="/blog/2014/04/29/reverse-string-to-object/"/>
       <content type="html"><![CDATA[<p>将 URL 中对象解析出来：</p><pre><code>var a=&apos;account.type=1&amp;account.id=&amp;account.dependFlag=0&amp;account.card.companyId=1&amp;account.name=%E4%B8%AD%E9%93%B6VISA%E5%8D%A1&amp;account.hidden=&amp;account.card.cardNo=&amp;account.moneyTypeId=0&amp;account.card.billDay=1&amp;account.card.repayType=0&amp;account.card.repayDay=20&amp;account.card.alert=2&amp;account.comment=%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D&apos;;var root={};a.split(&apos;&amp;&apos;).sort().map(function(s){    var p=root;    s.match(/(.+?)(?:\.|=)/g).map(function(ss){        var t=ss.slice(0,-1);        p[t]=p[t]||((ss.slice(-1)===&apos;=&apos;)?decodeURIComponent(s.match(/=(.*)$/)[1]):{});        p=p[t];    });});console.log(root);</code></pre><p>以上是网友的答案，我暂时没想到更好的算法。</p>]]></content>
@@ -3609,6 +3609,28 @@
             <tag> JavaScript </tag>
             
             <tag> 解析 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>mysqldump的使用</title>
+      <link href="/blog/2014/04/29/useage-of-mysqldump/"/>
+      <content type="html"><![CDATA[<ol><li><p>导出整个数据库<br>mysqldump -u 用户名 -p 数据库名 &gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc &gt; wcnc.sql</code></pre></li><li><p>导出一个表<br>mysqldump -u 用户名 -p 数据库名 表名&gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc users&gt; wcnc_users.sql</code></pre></li><li><p>导出一个数据库结构</p><pre><code>mysqldump -u wcnc -p -d --add-drop-table smgp_apps_wcnc &gt;d:\wcnc_db.sql</code></pre><p>-d 没有数据 –add-drop-table 在每个create语句之前增加一个drop table</p></li><li><p>导入数据库<br>常用source 命令<br>进入mysql数据库控制台，<br>如mysql -u root -p</p><p>mysql&gt;use 数据库<br>然后使用source命令，后面参数为脚本文件（如这里用到的.sql）</p><pre><code>mysql&gt;source d:\wcnc_db.sql</code></pre></li></ol>]]></content>
+      
+      <categories>
+          
+          <category> 后端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+            <tag> mysqldump </tag>
             
         </tags>
       
@@ -3691,6 +3713,28 @@
     </entry>
     
     <entry>
+      <title>jekyll安装不了？</title>
+      <link href="/blog/2014/04/27/ruby-jekyll-install/"/>
+      <content type="html"><![CDATA[<p>1、安装Ruby</p><pre><code>sudo apt-get install ruby1.9.1-dev</code></pre><p>2、安装Jekyll</p><pre><code>sudo gem install jekyll</code></pre><p>3、安装rake(用来可以生成markdown文件)</p><pre><code>sudo gem install rake</code></pre><p>注意几点：</p><ul><li>不是安装 ruby，而是 ruby-dev</li><li>安装 jekyll 之前应该先安装 rdoc</li></ul><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">sudo gem <span class="keyword">install</span> rdoc</span><br></pre></td></tr></table></figure><ul><li>关于gem的下载速度，查看<a href="/2014/04/27/gem-sources">这篇文章</a></li></ul>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> jekyll </tag>
+            
+            <tag> ruby </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>gem速度慢</title>
       <link href="/blog/2014/04/27/gem-sources/"/>
       <content type="html"><![CDATA[<p>删除本来的源，添加淘宝的源。</p><p>1 查看源</p><pre><code>gem sources list</code></pre><p>2 删除list中的源</p><pre><code>gem sources --remove http://rubygems.org/</code></pre><p>3 查看是否已经删除</p><pre><code>重复1,结果为空就正确</code></pre><p>4 添加淘宝的源</p><pre><code>gem sources -a http://ruby.taobao.org/</code></pre>]]></content>
@@ -3765,28 +3809,6 @@
     </entry>
     
     <entry>
-      <title>jekyll安装不了？</title>
-      <link href="/blog/2014/04/27/ruby-jekyll-install/"/>
-      <content type="html"><![CDATA[<p>1、安装Ruby</p><pre><code>sudo apt-get install ruby1.9.1-dev</code></pre><p>2、安装Jekyll</p><pre><code>sudo gem install jekyll</code></pre><p>3、安装rake(用来可以生成markdown文件)</p><pre><code>sudo gem install rake</code></pre><p>注意几点：</p><ul><li>不是安装 ruby，而是 ruby-dev</li><li>安装 jekyll 之前应该先安装 rdoc</li></ul><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">sudo gem <span class="keyword">install</span> rdoc</span><br></pre></td></tr></table></figure><ul><li>关于gem的下载速度，查看<a href="/2014/04/27/gem-sources">这篇文章</a></li></ul>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> jekyll </tag>
-            
-            <tag> ruby </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>jekyll编译时报错invalid byte sequence in GBK</title>
       <link href="/blog/2014/04/26/jekyll-error-when-compile/"/>
       <content type="html"><![CDATA[<p>找到你的Ruby安装目录，如我的是：D:\Ruby193, 在里面找到文件D:\Ruby193\lib\ruby\gems\1.9.1\gems\jekyll-0.12.0\lib\jekyll\convertible.rb<br>在该文件中找到下面句子：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name))</code></pre><p>将它修改为：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name),:encoding=&gt;&quot;utf-8&quot;)</code></pre><p>然后确保所有带中文字符的markdown文件是无BOM的UTF-8格式即可。</p>]]></content>
@@ -3805,30 +3827,6 @@
             <tag> jekyll </tag>
             
             <tag> ruby </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>巧妙交换值</title>
-      <link href="/blog/2014/04/26/replace-a-and-b/"/>
-      <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
-      
-      <categories>
-          
-          <category> JavaScript </category>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> hack </tag>
-            
-            <tag> tips </tag>
             
         </tags>
       
@@ -3875,6 +3873,30 @@
             <tag> tips </tag>
             
             <tag> clip </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>巧妙交换值</title>
+      <link href="/blog/2014/04/26/replace-a-and-b/"/>
+      <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
+      
+      <categories>
+          
+          <category> JavaScript </category>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> hack </tag>
+            
+            <tag> tips </tag>
             
         </tags>
       
@@ -4001,6 +4023,26 @@
     </entry>
     
     <entry>
+      <title>老程序员Vs新程序员</title>
+      <link href="/blog/2014/03/31/old-programmer-vs-newer/"/>
+      <content type="html"><![CDATA[<blockquote><p><strong>经验越足、知道的越多编程越慢</strong><br><br>这就是为何不能让老程序员冲锋在一线开发岗位的原因。因为编程经验越足、知道的越多，他做项目时就会思前顾后。往往一个小功能给菜鸟开发需要一周，老鸟开发可能得两周，结果用户一个需求变更直接干趴老鸟程序员。</p></blockquote><p>当你成为老程序员时是否也要开始重新审视下自己？！</p>]]></content>
+      
+      <categories>
+          
+          <category> 观点和感想 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> talk </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>npm穿墙</title>
       <link href="/blog/2014/03/31/npm-cross-wall/"/>
       <content type="html"><![CDATA[<p>GWF 很给力，很多东西都能墙掉，但是把 npm 也纳入黑名单，不知道 GWFer 是怎么想的。翻墙翻了好多年了，原理其实也挺简单的，proxy 嘛！</p><h3 id="»-方法一"><a href="#»-方法一" class="headerlink" title="» 方法一"></a>» 方法一</h3><p><strong>A)</strong> 国内源，<a href="http://cnpmjs.org" target="_blank" rel="noopener">http://cnpmjs.org</a></p><p>使用方式，你可以在 cmd 中键入 <code>npm install -g cnpm</code>，然后出去吃个饭，如果还没有安装好，那就换个方式：</p><pre><code>npm install -g cnpm --registry=http://r.cnpmjs.org</code></pre><p>registry 参数的作用就是指向需要 download 的仓库。 cnpm 跟国外的 npm 是同步的，只要 npm 有更新，cnpm 就会跟着一起更新。</p><p>当然，你也可以简单点搞：</p><pre><code>npm config set registry=&quot;http://r.cnpmjs.org&quot;</code></pre><p>在配置中直接指定源头，下次就没有必要使用 <code>--registry</code> 参数了。配置好了之后，npm 就指向了国内的仓库。</p><p><strong>B)</strong> 当然，你也可以安装 cnpm，安装好了之后使用 cnpm 来下载文件，其实原理跟上面是一样的，于是你就可以这样了：</p><pre><code>cnpm install -g package_name</code></pre><h3 id="»-方法二"><a href="#»-方法二" class="headerlink" title="» 方法二"></a>» 方法二</h3><p>代理，在配置中设置代理参数：</p><pre><code># 全局路径，也就是 npm install -g，这里 -g 的意义npm config set prefix=&quot;c:\nodejs&quot;# 一般使用 goagent 翻墙，他的默认端口是 8087npm config set proxy=http://127.0.0.1:8087# 设置 https 的代理npm config set https_proxy=http://127.0.0.1:8087# 这个地方记得设置下，别搞了个代理，结果在国内源下载npm config set registry=http://registry.npmjs.org</code></pre><p>这样配置好了之后，打开你的 goagent ，记得一定要打开，不然 npm 必然报错。上面写了一堆，其实没必要跟着写这么多，一句话就可以搞定：</p><pre><code>npm config set proxy=http://127.0.0.1:8087</code></pre><p>为啥呢，npm -g 没必要自己去配置， registry 默认就是 <code>http://registry.npmjs.org</code>，不配置 https_proxy，也走的通，所以就只剩下上面这条命令了。</p><h3 id="»-方法三"><a href="#»-方法三" class="headerlink" title="» 方法三"></a>» 方法三</h3><p>直接下载到本地。</p><p>实在是怕麻烦，就直接把文件 download 下来，然后放到 node_module 之中就行了。如果是全局模块，找到全局 node_module 的位置，然后解压放进去就行了。</p>]]></content>
@@ -4017,26 +4059,6 @@
             <tag> npm </tag>
             
             <tag> proxy </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>老程序员Vs新程序员</title>
-      <link href="/blog/2014/03/31/old-programmer-vs-newer/"/>
-      <content type="html"><![CDATA[<blockquote><p><strong>经验越足、知道的越多编程越慢</strong><br><br>这就是为何不能让老程序员冲锋在一线开发岗位的原因。因为编程经验越足、知道的越多，他做项目时就会思前顾后。往往一个小功能给菜鸟开发需要一周，老鸟开发可能得两周，结果用户一个需求变更直接干趴老鸟程序员。</p></blockquote><p>当你成为老程序员时是否也要开始重新审视下自己？！</p>]]></content>
-      
-      <categories>
-          
-          <category> 观点和感想 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> talk </tag>
             
         </tags>
       

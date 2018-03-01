@@ -8,8 +8,22 @@
     <script xmlns="http://www.w3.org/1999/xhtml" src="/public/js/rss.js"></script>
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     <description><![CDATA[想法，随笔，思考，感叹，瞬间，笔记...]]></description>
-    <pubDate>Wed Feb 28 2018 21:28:07 GMT+0800 (CST)</pubDate>
+    <pubDate>Thu Mar 01 2018 10:43:15 GMT+0800 (CST)</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title><![CDATA[陪伴]]></title>
+      <link>http://www.barretlee.com/blog/2018/03/01/%E9%99%AA%E4%BC%B4/</link>
+      <guid>http://www.barretlee.com/blog/2018/03/01/%E9%99%AA%E4%BC%B4/</guid>
+      <pubDate>Thu Mar 01 2018 10:24:25 GMT+0800 (CST)</pubDate>
+      <description>
+      <![CDATA[小胡子哥的个人网站]]>
+      
+      </description>
+      <content:encoded><![CDATA[小胡子哥的个人网站]]>
+      </content:encoded>
+      <comments>http://www.barretlee.com/blog/2018/03/01/%E9%99%AA%E4%BC%B4/#comments</comments>
+    </item>
     
     <item>
       <title><![CDATA[有点强迫症的程序员]]></title>
@@ -415,20 +429,6 @@
       <content:encoded><![CDATA[灵活是 Javascript 这门语言的特性，也是它难以被掌控的主要原因，这点可以从文中各种沙箱逃逸方式就能看出。ES6 提供了很多新的特性，本文以沙箱为切入点，带着大家学习了几个函数和属性，希望读者有些收获。]]>
       </content:encoded>
       <comments>http://www.barretlee.com/blog/2016/08/23/javascript-sandbox/#comments</comments>
-    </item>
-    
-    <item>
-      <title><![CDATA[聊一聊排序算法]]></title>
-      <link>http://www.barretlee.com/blog/2016/08/11/algorithms-of-sort/</link>
-      <guid>http://www.barretlee.com/blog/2016/08/11/algorithms-of-sort/</guid>
-      <pubDate>Thu Aug 11 2016 20:24:40 GMT+0800 (CST)</pubDate>
-      <description>
-      <![CDATA[两月前花了些时间，将大学里学过的排序算法都复习了一遍，代码放在 github 上。没有整理，今天翻了翻代码，重新 review 了一遍，也顺便做了点记录。]]>
-      
-      </description>
-      <content:encoded><![CDATA[两月前花了些时间，将大学里学过的排序算法都复习了一遍，代码放在 github 上。没有整理，今天翻了翻代码，重新 review 了一遍，也顺便做了点记录。]]>
-      </content:encoded>
-      <comments>http://www.barretlee.com/blog/2016/08/11/algorithms-of-sort/#comments</comments>
     </item>
     
   </channel>
