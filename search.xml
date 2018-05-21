@@ -1150,9 +1150,9 @@
       
         <tags>
             
-            <tag> 淘宝首页 </tag>
-            
             <tag> 个性化 </tag>
+            
+            <tag> 淘宝首页 </tag>
             
         </tags>
       
@@ -2347,30 +2347,6 @@
     </entry>
     
     <entry>
-      <title>Xcode-select Error</title>
-      <link href="/blog/2015/04/13/xcode-select-error/"/>
-      <content type="html"><![CDATA[<p>错误信息：</p><blockquote><p>xcode-select: error: tool ‘xcodebuild’ requires Xcode, but active developer directory ‘/Library/Developer/CommandLineTools’ is a command line tools instance</p></blockquote><p>解决方案：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer</span><br></pre></td></tr></table></figure>]]></content>
-      
-      <categories>
-          
-          <category> 工具 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> mac </tag>
-            
-            <tag> Xcode </tag>
-            
-            <tag> Error </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>this的指向</title>
       <link href="/blog/2015/04/13/this-reference/"/>
       <content type="html"><![CDATA[<p>网友问题：</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">"The Window"</span>;   </span><br><span class="line">　　<span class="keyword">var</span> object = &#123;  </span><br><span class="line">　　　　name : <span class="string">"My Object"</span>,  </span><br><span class="line">　　　　getNameFunc : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;  </span><br><span class="line">　　　　　　　　<span class="keyword">return</span> <span class="keyword">this</span>.name;  </span><br><span class="line">　　　　&#125;   </span><br><span class="line">&#125;;  </span><br><span class="line"><span class="keyword">var</span> a = object.getNameFunc;</span><br><span class="line">alert(a());</span><br><span class="line">alert(object.getNameFunc());</span><br></pre></td></tr></table></figure><p>原因：</p><p><code>object.getNameFunc()</code> ，此时的 <code>object.getNameFunc</code> 为引用类型，其 base 为 <code>object</code>，this 指向的是 base，所以返回 <code>object.name</code> 的值</p><p><code>name = object.getNameFunc</code>, <code>test</code> 作为标识符，生成了其他引用类型的值，此时 base 已经从 <code>object</code> 重置为 <code>null</code>，也就是会指向 global（window），所以返回的是 window.name 的值。</p><p>问题的关键在于「引用类型（type Reference）的中间值发生改变」</p>]]></content>
@@ -2389,6 +2365,30 @@
             <tag> this </tag>
             
             <tag> reference </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Xcode-select Error</title>
+      <link href="/blog/2015/04/13/xcode-select-error/"/>
+      <content type="html"><![CDATA[<p>错误信息：</p><blockquote><p>xcode-select: error: tool ‘xcodebuild’ requires Xcode, but active developer directory ‘/Library/Developer/CommandLineTools’ is a command line tools instance</p></blockquote><p>解决方案：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer</span><br></pre></td></tr></table></figure>]]></content>
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> mac </tag>
+            
+            <tag> Xcode </tag>
+            
+            <tag> Error </tag>
             
         </tags>
       
@@ -2793,6 +2793,26 @@
     </entry>
     
     <entry>
+      <title>去掉IE11中input右侧的关闭叉叉</title>
+      <link href="/blog/2014/11/17/input-close-btn-in-ie11/"/>
+      <content type="html"><![CDATA[<p>在 IE11 下，浏览器自作多情在 text input 组件上加一个 close 叉叉：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/11/17/825ef988-6e3e-11e4-900a-5fadd3465d94.png" alt="image"></p><p>这么整：</p><pre><code>input::-ms-clear { display: none; } </code></pre><p>这种伪元素类似于 web component.</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CSS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>让身体残疾的人可以访问Web</title>
       <link href="/blog/2014/11/17/web-accessibility/"/>
       <content type="html"><![CDATA[<blockquote><p>Web accessibility means that people with disabilities can use the Web.<br><br>让身体残疾的人可以访问Web，这就是 Web Accessibility。</p></blockquote><p>在中国，有数以百万甚至千万计的人无法正常地使用网络，不是因为他们脑子不好使，也不是因为他们没钱没文化，而是他们用来感知这个世界的能力受到了先天或者后天的破坏。WAI（Web Accessibility inititive）这个议题在<a href="http://www.w3.org/WAI/history" target="_blank" rel="noopener">1997年五月份</a>被提上议案，至今已经形成了一个庞大的知识体系。</p><p>残疾人士包括：失明和低视力、失聪和重听、学习障碍、认知障碍、行动不便、言语残疾、光过敏患者和这些病症的复合患者。涉及类别包括：视觉、听觉、身体、语言、认知、语言、学习以及神经残疾。</p><p>事实上，网页无障碍化，其对象不限于残疾人士。如果哪一天你打球手骨折了，你可以感受下无障碍给你带来的便利；如果哪一天你也两鬓霜白，眼力退化、听力退化，网页无障碍化技术就是你的第二双眼睛、第二双耳朵…</p><p>后期我会投入一定的时间研究并推动相关内容。</p>]]></content>
@@ -2809,26 +2829,6 @@
         <tags>
             
             <tag> WAI </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>去掉IE11中input右侧的关闭叉叉</title>
-      <link href="/blog/2014/11/17/input-close-btn-in-ie11/"/>
-      <content type="html"><![CDATA[<p>在 IE11 下，浏览器自作多情在 text input 组件上加一个 close 叉叉：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/11/17/825ef988-6e3e-11e4-900a-5fadd3465d94.png" alt="image"></p><p>这么整：</p><pre><code>input::-ms-clear { display: none; } </code></pre><p>这种伪元素类似于 web component.</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> CSS </tag>
             
         </tags>
       
@@ -3667,28 +3667,6 @@
     </entry>
     
     <entry>
-      <title>git版本回退操作</title>
-      <link href="/blog/2014/04/28/git-roll-back/"/>
-      <content type="html"><![CDATA[<p>今天 github 上操作遇到了一个很头疼的问题，在某个文件中进行了误操作（有可能是加入了BOM头），diff 没看到差异，但是线上就是不正常显示。修改半天没用，只要回退版本。</p><p>通过 <code>git log</code> 可以查看近期 commit 的信息：</p><pre><code>commit bcdfd65ba3f16a0647e7687f92cca25d51738d2eAuthor: Barret Lee &lt;barret.china@gmail.com&gt;Date:   Mon Apr 28 01:22:27 2014 +0800    now postcommit 69eeaa60c5808c143aabce4d52feb104e2e4591bAuthor: Barret &lt;barret.china@gmail.com&gt;Date:   Sat Apr 26 21:03:48 2014 +0800    fix bugcommit b9e4b8c697d139ec35e17be7dd353f1338e9b92eAuthor: Jing Lee &lt;barret.china@gmail.com&gt;Date:   Sat Apr 26 19:35:37 2014 +0800    Update atom.xml</code></pre><p>commit 后面的一串字符就是 SHA 字符。</p><pre><code>git reset --hard SHA  </code></pre><p>这句命令可以回退到指定版本。不过上传的时候要注意了，如果你是：</p><pre><code>git push -u master origin</code></pre><p>肯定会出现这样的错误提示：</p><pre><code>error: failed to push some refs to &apos;//github.com/barretlee/barretlee.github.io.git&apos;hint: Updates were rejected because the tip of your current branch is behindhint: its remote counterpart. Integrate the remote changes (e.g.hint: &apos;git pull ...&apos;) before pushing again.hint: See the &apos;Note about fast-forwards&apos; in &apos;git push --help&apos; for details.</code></pre><p>原因是你本地版本要落后于服务器上的版本（git reset 回退了嘛），如果想覆盖服务器上版本，应该加 <code>-f</code> ，强制提交，</p><pre><code>git push -u master origin -f</code></pre><p>不过这样的操作要谨慎了，先把修改的位置备份（拿出来，复制到文件夹外），完成上述操作之后再复制回来处理。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> git </tag>
-            
-            <tag> CMS </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>当正则匹配零个字符</title>
       <link href="/blog/2014/04/28/reg-match-null/"/>
       <content type="html"><![CDATA[<pre><code>&quot;something&quot;.match(/\s*(.*?)\s*/)&gt; [&apos;&apos;, &apos;&apos;]&quot;something&quot;.match(/^\s*(.*?)\s*$/)&gt; [&quot;something&quot;, &quot;something&quot;]</code></pre><p>为何前者匹配的结果为空？</p><p>如果你不清楚正则的贪婪模式和非贪婪模式，请先移步<a href="http://www.cnblogs.com/hustskyking/p/how-regular-expressions-work.html#p-2.2" target="_blank" rel="noopener">这里</a>.</p><p>整个匹配分为三步：</p><ol><li>第一个 \s*, 贪婪模式把字符全部吞掉，然后回溯，直到第一个字符任然没找到</li><li>第二步是 .*? 由于是非贪婪模式匹配了一个字符就结束了，继续第三步</li><li>第三步匹配失败，回溯到第二步，那第二步会继续减少吞掉的字符，于是字符数缩减到零。</li></ol><p>可能这么说还是不太清晰，先看看这个对比：<br><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/04/28/7e6c1076-cecb-11e3-823e-640e1b53ca00.jpg" alt="qq20140428195101"></p><p>关于返回结果不是 null 而是 “”，你可以理解为匹配到了零个 a。</p>]]></content>
@@ -3713,9 +3691,9 @@
     </entry>
     
     <entry>
-      <title>jekyll安装不了？</title>
-      <link href="/blog/2014/04/27/ruby-jekyll-install/"/>
-      <content type="html"><![CDATA[<p>1、安装Ruby</p><pre><code>sudo apt-get install ruby1.9.1-dev</code></pre><p>2、安装Jekyll</p><pre><code>sudo gem install jekyll</code></pre><p>3、安装rake(用来可以生成markdown文件)</p><pre><code>sudo gem install rake</code></pre><p>注意几点：</p><ul><li>不是安装 ruby，而是 ruby-dev</li><li>安装 jekyll 之前应该先安装 rdoc</li></ul><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">sudo gem <span class="keyword">install</span> rdoc</span><br></pre></td></tr></table></figure><ul><li>关于gem的下载速度，查看<a href="/2014/04/27/gem-sources">这篇文章</a></li></ul>]]></content>
+      <title>git版本回退操作</title>
+      <link href="/blog/2014/04/28/git-roll-back/"/>
+      <content type="html"><![CDATA[<p>今天 github 上操作遇到了一个很头疼的问题，在某个文件中进行了误操作（有可能是加入了BOM头），diff 没看到差异，但是线上就是不正常显示。修改半天没用，只要回退版本。</p><p>通过 <code>git log</code> 可以查看近期 commit 的信息：</p><pre><code>commit bcdfd65ba3f16a0647e7687f92cca25d51738d2eAuthor: Barret Lee &lt;barret.china@gmail.com&gt;Date:   Mon Apr 28 01:22:27 2014 +0800    now postcommit 69eeaa60c5808c143aabce4d52feb104e2e4591bAuthor: Barret &lt;barret.china@gmail.com&gt;Date:   Sat Apr 26 21:03:48 2014 +0800    fix bugcommit b9e4b8c697d139ec35e17be7dd353f1338e9b92eAuthor: Jing Lee &lt;barret.china@gmail.com&gt;Date:   Sat Apr 26 19:35:37 2014 +0800    Update atom.xml</code></pre><p>commit 后面的一串字符就是 SHA 字符。</p><pre><code>git reset --hard SHA  </code></pre><p>这句命令可以回退到指定版本。不过上传的时候要注意了，如果你是：</p><pre><code>git push -u master origin</code></pre><p>肯定会出现这样的错误提示：</p><pre><code>error: failed to push some refs to &apos;//github.com/barretlee/barretlee.github.io.git&apos;hint: Updates were rejected because the tip of your current branch is behindhint: its remote counterpart. Integrate the remote changes (e.g.hint: &apos;git pull ...&apos;) before pushing again.hint: See the &apos;Note about fast-forwards&apos; in &apos;git push --help&apos; for details.</code></pre><p>原因是你本地版本要落后于服务器上的版本（git reset 回退了嘛），如果想覆盖服务器上版本，应该加 <code>-f</code> ，强制提交，</p><pre><code>git push -u master origin -f</code></pre><p>不过这样的操作要谨慎了，先把修改的位置备份（拿出来，复制到文件夹外），完成上述操作之后再复制回来处理。</p>]]></content>
       
       <categories>
           
@@ -3726,9 +3704,9 @@
       
         <tags>
             
-            <tag> jekyll </tag>
+            <tag> git </tag>
             
-            <tag> ruby </tag>
+            <tag> CMS </tag>
             
         </tags>
       
@@ -3759,6 +3737,32 @@
     </entry>
     
     <entry>
+      <title>IOS边缘回弹的禁止</title>
+      <link href="/blog/2014/04/27/IOS-doc-scroll/"/>
+      <content type="html"><![CDATA[<p>IOS的浏览器里头，文档滚到顶部或者底部，还是可以继续滚动，对于全屏的应用来说，这个多余的体验是十分不好的。如下：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/04/27/958be2f6-cdf2-11e3-8266-4adf0ab7da7d.jpg" data-source="//cloud.githubusercontent.com/assets/2698003/2810913/958be2f6-cdf2-11e3-8266-4adf0ab7da7d.jpg"></p><p>比较靠谱的方式是：</p><pre><code>document.addEventListener(&quot;touchmove&quot;, function(evt){  evt.preventDefault();}, true);</code></pre><p>禁用 touchmove，方法很靠谱，不过还是谨慎点用。呵呵。</p>]]></content>
+      
+      <categories>
+          
+          <category> JavaScript </category>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> IOS </tag>
+            
+            <tag> touchmove </tag>
+            
+            <tag> scroll </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>Ubuntu下Rhythmbox mp3音乐乱码</title>
       <link href="/blog/2014/04/27/filename-messy-code/"/>
       <content type="html"><![CDATA[<p>linux系统遇到点乱码问题是很正常的，你碰到的问题，别人一般会已经碰到过，甚至已经有了很好的解决方案。</p><p>今天遇到的问题是：Rhythmbox mp3音乐乱码</p><p>处理方案：</p><pre><code>sudo vim /etc/profile  # 类似 windows 下的环境变量# 添加export GST_ID3_TAG_ENCODING=GBK:UTF-8:GB18030export GST_ID3V2_TAG_ENCODING=GBK:UTF-8:GB18030</code></pre><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/04/27/cd93a704-ce17-11e3-9b5d-a00b8c0f6c03.jpg" alt="Rhythmbox mp3音乐乱码"></p><p>重启电脑，没想到不用重启的方法，<code>source ~/.profile</code> 没效果。</p>]]></content>
@@ -3783,13 +3787,11 @@
     </entry>
     
     <entry>
-      <title>IOS边缘回弹的禁止</title>
-      <link href="/blog/2014/04/27/IOS-doc-scroll/"/>
-      <content type="html"><![CDATA[<p>IOS的浏览器里头，文档滚到顶部或者底部，还是可以继续滚动，对于全屏的应用来说，这个多余的体验是十分不好的。如下：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/04/27/958be2f6-cdf2-11e3-8266-4adf0ab7da7d.jpg" data-source="//cloud.githubusercontent.com/assets/2698003/2810913/958be2f6-cdf2-11e3-8266-4adf0ab7da7d.jpg"></p><p>比较靠谱的方式是：</p><pre><code>document.addEventListener(&quot;touchmove&quot;, function(evt){  evt.preventDefault();}, true);</code></pre><p>禁用 touchmove，方法很靠谱，不过还是谨慎点用。呵呵。</p>]]></content>
+      <title>jekyll安装不了？</title>
+      <link href="/blog/2014/04/27/ruby-jekyll-install/"/>
+      <content type="html"><![CDATA[<p>1、安装Ruby</p><pre><code>sudo apt-get install ruby1.9.1-dev</code></pre><p>2、安装Jekyll</p><pre><code>sudo gem install jekyll</code></pre><p>3、安装rake(用来可以生成markdown文件)</p><pre><code>sudo gem install rake</code></pre><p>注意几点：</p><ul><li>不是安装 ruby，而是 ruby-dev</li><li>安装 jekyll 之前应该先安装 rdoc</li></ul><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">sudo gem <span class="keyword">install</span> rdoc</span><br></pre></td></tr></table></figure><ul><li>关于gem的下载速度，查看<a href="/2014/04/27/gem-sources">这篇文章</a></li></ul>]]></content>
       
       <categories>
-          
-          <category> JavaScript </category>
           
           <category> 前端杂烩 </category>
           
@@ -3798,11 +3800,9 @@
       
         <tags>
             
-            <tag> IOS </tag>
+            <tag> jekyll </tag>
             
-            <tag> touchmove </tag>
-            
-            <tag> scroll </tag>
+            <tag> ruby </tag>
             
         </tags>
       
@@ -4023,20 +4023,22 @@
     </entry>
     
     <entry>
-      <title>老程序员Vs新程序员</title>
-      <link href="/blog/2014/03/31/old-programmer-vs-newer/"/>
-      <content type="html"><![CDATA[<blockquote><p><strong>经验越足、知道的越多编程越慢</strong><br><br>这就是为何不能让老程序员冲锋在一线开发岗位的原因。因为编程经验越足、知道的越多，他做项目时就会思前顾后。往往一个小功能给菜鸟开发需要一周，老鸟开发可能得两周，结果用户一个需求变更直接干趴老鸟程序员。</p></blockquote><p>当你成为老程序员时是否也要开始重新审视下自己？！</p>]]></content>
+      <title>webview中的点击高亮问题</title>
+      <link href="/blog/2014/03/31/tap-highlight-in-webview/"/>
+      <content type="html"><![CDATA[<p>这两天在做一个淘金币的小游戏，测试页面的时候还挺正常的，放到webview（嵌入诸如微信、微博等客户端的网页容器）中就出问题了。</p><p>给元素绑定了一个 tap 事件，点击元素，该元素周边会出现点东西，IOS 中是个半透明的灰色背景，在 android 中出现红色的边框，不仅影响美感，貌似还会影响性能（这点东西渲染出来需要时间，会阻塞 JS 中控制的元素渲染）。</p><p>开始本以为使用 user-select 可以干掉这玩意儿，结果无效，网上寻觅半天之后，找到了问题。</p><p>css 中有个属性叫做 -webkit-tap-highlight-color ，顾名思义，就是点击元素的时候会有一个高亮的效果。当然不能把他称之为 bug，这也是浏览器为了让用户知道你点中了某个东西，给他醒目的提示，算是增强体验，但是在一些场景中，这不仅没有增强体验，还会影响体验。</p><p>解决方案：</p><pre><code>.obj {-webkit-tap-highlight-color:rgba(0,0,0,0);}</code></pre><p>有些机子可能比较坑爹，rgba 这种方式支持的不是很好，我们可以用 transparent 来给他透明化。</p><pre><code>.obj {  -webkit-tap-highlight-color: rgba(0,0,0,0);  -webkit-tap-highlight-color: transparent; /* For some Androids */}</code></pre><p>小小分享。</p>]]></content>
       
       <categories>
           
-          <category> 观点和感想 </category>
+          <category> 前端杂烩 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> talk </tag>
+            <tag> webview </tag>
+            
+            <tag> highlight </tag>
             
         </tags>
       
@@ -4065,22 +4067,20 @@
     </entry>
     
     <entry>
-      <title>webview中的点击高亮问题</title>
-      <link href="/blog/2014/03/31/tap-highlight-in-webview/"/>
-      <content type="html"><![CDATA[<p>这两天在做一个淘金币的小游戏，测试页面的时候还挺正常的，放到webview（嵌入诸如微信、微博等客户端的网页容器）中就出问题了。</p><p>给元素绑定了一个 tap 事件，点击元素，该元素周边会出现点东西，IOS 中是个半透明的灰色背景，在 android 中出现红色的边框，不仅影响美感，貌似还会影响性能（这点东西渲染出来需要时间，会阻塞 JS 中控制的元素渲染）。</p><p>开始本以为使用 user-select 可以干掉这玩意儿，结果无效，网上寻觅半天之后，找到了问题。</p><p>css 中有个属性叫做 -webkit-tap-highlight-color ，顾名思义，就是点击元素的时候会有一个高亮的效果。当然不能把他称之为 bug，这也是浏览器为了让用户知道你点中了某个东西，给他醒目的提示，算是增强体验，但是在一些场景中，这不仅没有增强体验，还会影响体验。</p><p>解决方案：</p><pre><code>.obj {-webkit-tap-highlight-color:rgba(0,0,0,0);}</code></pre><p>有些机子可能比较坑爹，rgba 这种方式支持的不是很好，我们可以用 transparent 来给他透明化。</p><pre><code>.obj {  -webkit-tap-highlight-color: rgba(0,0,0,0);  -webkit-tap-highlight-color: transparent; /* For some Androids */}</code></pre><p>小小分享。</p>]]></content>
+      <title>老程序员Vs新程序员</title>
+      <link href="/blog/2014/03/31/old-programmer-vs-newer/"/>
+      <content type="html"><![CDATA[<blockquote><p><strong>经验越足、知道的越多编程越慢</strong><br><br>这就是为何不能让老程序员冲锋在一线开发岗位的原因。因为编程经验越足、知道的越多，他做项目时就会思前顾后。往往一个小功能给菜鸟开发需要一周，老鸟开发可能得两周，结果用户一个需求变更直接干趴老鸟程序员。</p></blockquote><p>当你成为老程序员时是否也要开始重新审视下自己？！</p>]]></content>
       
       <categories>
           
-          <category> 前端杂烩 </category>
+          <category> 观点和感想 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> webview </tag>
-            
-            <tag> highlight </tag>
+            <tag> talk </tag>
             
         </tags>
       
