@@ -8,8 +8,64 @@
     <script xmlns="http://www.w3.org/1999/xhtml" src="/public/js/rss.js"></script>
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     <description><![CDATA[想法，随笔，思考，感叹，瞬间，笔记...]]></description>
-    <pubDate>Wed May 30 2018 11:52:30 GMT+0800 (CST)</pubDate>
+    <pubDate>Mon Jun 18 2018 23:55:23 GMT+0800 (CST)</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title><![CDATA[系列 - 树莓派外接蓝牙音箱（四）]]></title>
+      <link>http://www.barretlee.com/blog/2018/06/18/rasyberry-pi-playback/</link>
+      <guid>http://www.barretlee.com/blog/2018/06/18/rasyberry-pi-playback/</guid>
+      <pubDate>Mon Jun 18 2018 10:24:25 GMT+0800 (CST)</pubDate>
+      <description>
+      <![CDATA[为啥第四篇写的是外接蓝牙音箱？那是因为我在阅读文章的时候，不小心看到了通过命令行进行蓝牙操作]]>
+      
+      </description>
+      <content:encoded><![CDATA[为啥第四篇写的是外接蓝牙音箱？那是因为我在阅读文章的时候，不小心看到了通过命令行进行蓝牙操作]]>
+      </content:encoded>
+      <comments>http://www.barretlee.com/blog/2018/06/18/rasyberry-pi-playback/#comments</comments>
+    </item>
+    
+    <item>
+      <title><![CDATA[系列 - 认识树莓派 GPIO（三）]]></title>
+      <link>http://www.barretlee.com/blog/2018/06/16/rasyberry-pi-gpio/</link>
+      <guid>http://www.barretlee.com/blog/2018/06/16/rasyberry-pi-gpio/</guid>
+      <pubDate>Sat Jun 16 2018 10:24:25 GMT+0800 (CST)</pubDate>
+      <description>
+      <![CDATA[在写《系列 - 树莓派外接蓝牙音箱（四）》的时候，发现还是得先解释下 GPIO]]>
+      
+      </description>
+      <content:encoded><![CDATA[在写《系列 - 树莓派外接蓝牙音箱（四）》的时候，发现还是得先解释下 GPIO]]>
+      </content:encoded>
+      <comments>http://www.barretlee.com/blog/2018/06/16/rasyberry-pi-gpio/#comments</comments>
+    </item>
+    
+    <item>
+      <title><![CDATA[系列 - 树莓派装机（二）]]></title>
+      <link>http://www.barretlee.com/blog/2018/06/14/rasyberry-pi-os/</link>
+      <guid>http://www.barretlee.com/blog/2018/06/14/rasyberry-pi-os/</guid>
+      <pubDate>Thu Jun 14 2018 10:24:25 GMT+0800 (CST)</pubDate>
+      <description>
+      <![CDATA[本节将给大家介绍，如何从树莓派上进入到自己熟悉的远程开发模式。]]>
+      
+      </description>
+      <content:encoded><![CDATA[本节将给大家介绍，如何从树莓派上进入到自己熟悉的远程开发模式。]]>
+      </content:encoded>
+      <comments>http://www.barretlee.com/blog/2018/06/14/rasyberry-pi-os/#comments</comments>
+    </item>
+    
+    <item>
+      <title><![CDATA[系列 - 入坑树莓派（一）]]></title>
+      <link>http://www.barretlee.com/blog/2018/06/12/rasyberry-pi-start/</link>
+      <guid>http://www.barretlee.com/blog/2018/06/12/rasyberry-pi-start/</guid>
+      <pubDate>Tue Jun 12 2018 10:24:25 GMT+0800 (CST)</pubDate>
+      <description>
+      <![CDATA[树莓派，是一款基于 Linux 的单板机，配上一些可交互的硬件设备（扩展屏、鼠标、键盘等），也就成了一款配置略低的电脑。]]>
+      
+      </description>
+      <content:encoded><![CDATA[树莓派，是一款基于 Linux 的单板机，配上一些可交互的硬件设备（扩展屏、鼠标、键盘等），也就成了一款配置略低的电脑。]]>
+      </content:encoded>
+      <comments>http://www.barretlee.com/blog/2018/06/12/rasyberry-pi-start/#comments</comments>
+    </item>
     
     <item>
       <title><![CDATA[中银国际提款到香港招行一卡通]]></title>
@@ -373,62 +429,6 @@
       <content:encoded><![CDATA[不论是本地开发，还是远程到 Server 开发，还是给提供 demo 给人看效果，我们时常需要对 Nginx 做配置，Nginx 的配置项相当多，配置起来也比较麻烦。不过，我们往往只是需要一个静态 Server，或者一个反向代理 Server，这对 Nginx 来说小菜一碟。]]>
       </content:encoded>
       <comments>http://www.barretlee.com/blog/2016/11/19/nginx-configuration-start/#comments</comments>
-    </item>
-    
-    <item>
-      <title><![CDATA[谈一谈我在阿里的成长]]></title>
-      <link>http://www.barretlee.com/blog/2016/10/21/my-growth-at-alibaba/</link>
-      <guid>http://www.barretlee.com/blog/2016/10/21/my-growth-at-alibaba/</guid>
-      <pubDate>Fri Oct 21 2016 03:22:50 GMT+0800 (CST)</pubDate>
-      <description>
-      <![CDATA[昨天受阿里通信的同事邀请，分享了一个关于成长的话题。其实我不太热衷于分享此类话题，作为一个技术人，分享那些没有技术干货的内容总感觉有些怪怪的，无奈，还是拟下了这个话题——《谈一谈我在阿里的成长》，所以本文主要是分享的 PPT 简述。]]>
-      
-      </description>
-      <content:encoded><![CDATA[昨天受阿里通信的同事邀请，分享了一个关于成长的话题。其实我不太热衷于分享此类话题，作为一个技术人，分享那些没有技术干货的内容总感觉有些怪怪的，无奈，还是拟下了这个话题——《谈一谈我在阿里的成长》，所以本文主要是分享的 PPT 简述。]]>
-      </content:encoded>
-      <comments>http://www.barretlee.com/blog/2016/10/21/my-growth-at-alibaba/#comments</comments>
-    </item>
-    
-    <item>
-      <title><![CDATA[揭秘 0.1 + 0.2 != 0.3]]></title>
-      <link>http://www.barretlee.com/blog/2016/09/28/ieee754-operation-in-js/</link>
-      <guid>http://www.barretlee.com/blog/2016/09/28/ieee754-operation-in-js/</guid>
-      <pubDate>Wed Sep 28 2016 23:05:23 GMT+0800 (CST)</pubDate>
-      <description>
-      <![CDATA[在采用 IEEE754 浮点数标准的语言中，0.1 + 0.2 都不会等于 0.3，但是 0.2 + 0.3 却等于 0.5，这是为何？想必这类问题也困扰着不少程序员。]]>
-      
-      </description>
-      <content:encoded><![CDATA[在采用 IEEE754 浮点数标准的语言中，0.1 + 0.2 都不会等于 0.3，但是 0.2 + 0.3 却等于 0.5，这是为何？想必这类问题也困扰着不少程序员。]]>
-      </content:encoded>
-      <comments>http://www.barretlee.com/blog/2016/09/28/ieee754-operation-in-js/#comments</comments>
-    </item>
-    
-    <item>
-      <title><![CDATA[如何做好一名实习生]]></title>
-      <link>http://www.barretlee.com/blog/2016/09/27/how-to-be-a-excellent-intern/</link>
-      <guid>http://www.barretlee.com/blog/2016/09/27/how-to-be-a-excellent-intern/</guid>
-      <pubDate>Tue Sep 27 2016 00:59:23 GMT+0800 (CST)</pubDate>
-      <description>
-      <![CDATA[最近看到有几个同事准备着转正，想借此机会聊一下实习生相关的话题——如何成为一名优秀的实习生。]]>
-      
-      </description>
-      <content:encoded><![CDATA[最近看到有几个同事准备着转正，想借此机会聊一下实习生相关的话题——如何成为一名优秀的实习生。]]>
-      </content:encoded>
-      <comments>http://www.barretlee.com/blog/2016/09/27/how-to-be-a-excellent-intern/#comments</comments>
-    </item>
-    
-    <item>
-      <title><![CDATA[详解代理自动配置 PAC]]></title>
-      <link>http://www.barretlee.com/blog/2016/08/25/pac-file/</link>
-      <guid>http://www.barretlee.com/blog/2016/08/25/pac-file/</guid>
-      <pubDate>Thu Aug 25 2016 01:31:50 GMT+0800 (CST)</pubDate>
-      <description>
-      <![CDATA[PAC，一个自动代理配置脚本，包含了很多使用 JavaScript 编写的规则，它能够决定网络流量走默认通道还是代理服务器通道，控制的流量类型包括：HTTP、HTTPS 和 FTP。]]>
-      
-      </description>
-      <content:encoded><![CDATA[PAC，一个自动代理配置脚本，包含了很多使用 JavaScript 编写的规则，它能够决定网络流量走默认通道还是代理服务器通道，控制的流量类型包括：HTTP、HTTPS 和 FTP。]]>
-      </content:encoded>
-      <comments>http://www.barretlee.com/blog/2016/08/25/pac-file/#comments</comments>
     </item>
     
   </channel>

@@ -3,9 +3,89 @@
   
     
     <entry>
+      <title>系列 - 树莓派外接蓝牙音箱（四）</title>
+      <link href="/blog/2018/06/18/rasyberry-pi-playback/"/>
+      <content type="html"><![CDATA[<p>为啥第四篇写的是外接蓝牙音箱？那是因为我在阅读文章的时候，不小心看到了通过命令行进行蓝牙操作：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo bluetoothctl;</span><br><span class="line">power on</span><br><span class="line">scan on</span><br><span class="line">agent on</span><br><span class="line">pair MAC</span><br><span class="line">trust MAC</span><br><span class="line">connect MAC</span><br></pre></td></tr></table></figure><p>尝试了一次，这些命令瞬间便记住了，但记住了还不够呀，需要找个场景试验下——外接一个蓝牙音箱，让树莓派的音频流在音箱中播放。感觉这个操作会有点意思，为了增加点难度，再设计一个按钮开关，通过按压操作来连接或断开蓝牙音箱。</p><h3 id="可视化操作"><a href="#可视化操作" class="headerlink" title="可视化操作"></a>可视化操作</h3><p>树莓派并不是一个无界面的纯终端，首先，我们来看看如何通过 VNC 进行可视化操作：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 给板子装客户端</span></span><br><span class="line">sudo apt-get install tightvncserver</span><br><span class="line"><span class="comment"># 开启一个 VNC 流，代号为 1</span></span><br><span class="line">tightvncserver :1</span><br></pre></td></tr></table></figure><p>然后在 Mac 上安装 VNC Viewer 客户端，然后连接 <code>IP:1</code>，IP 为树莓派的地址：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-20-34-53.png" alt=""></p><p>在这个系列中，我会尽可能少地进行可视化操作，毕竟这种操作的意义不大，板子的性能本身就不高，额外开一个可视化的操作界面，会比较卡。</p><h3 id="蓝牙连接（界面操作）"><a href="#蓝牙连接（界面操作）" class="headerlink" title="蓝牙连接（界面操作）"></a>蓝牙连接（界面操作）</h3><p>如果你钟爱界面化操作，可以安装一个蓝牙管理软件：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install pi-bluetooth blueman</span><br></pre></td></tr></table></figure><p>安装好了以后，可以在 <code>Preferences -&gt; Bluetooth Manager</code>，找到蓝牙列表：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-18-23-04-53.png" alt=""></p><p>打开浏览器，在线播放一首音乐，你会发现，咦，为啥没有声音？原因在这里：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-17-03-03-22.png" alt=""></p><p>在音量控制处右键，会看到一个列表：</p><ul><li>Anlog，是通过耳机线出声，耳机插上板子就有声音了，音质比较差</li><li>HDMI，需要通过 USB 接口连接播放器</li><li>下面几个是连接的蓝牙设备，必须勾上才会出声</li></ul><p>事实上，我勾上了蓝牙设备，依然没有声音，没具体折腾为啥，但在音量控制面板中的第一个 Tab 勾选下对应设备就好了：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-17-03-02-32.png" alt=""></p><p>在调试引脚时，发现再一次没声音了，摸索了好几次，发现这么处理可以解决问题，屡试不爽：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 先把 GPIO 引脚上的线给拔了，不拔可能会影响蓝牙驱动的加载？不知道，先拔了</span></span><br><span class="line"><span class="comment"># 如果之前插着线，重启，重新加载驱动</span></span><br><span class="line">sudo reboot</span><br><span class="line"><span class="comment"># 再看看是否有报错，比如 Sap driver initialization failed.</span></span><br><span class="line">service bluetooth status</span><br><span class="line"><span class="comment"># 如果有错误，重新启动下，可以选择 root</span></span><br><span class="line">service bluetooth restart</span><br><span class="line"><span class="comment"># 然后重新连接蓝牙，一般声音就来了</span></span><br></pre></td></tr></table></figure><p>不知道是否是驱动在 Linux 内核加载的时候存在问题还是有其他问题，没有深究，先这么凑合着处理吧。</p><h3 id="蓝牙连接（硬件控制）"><a href="#蓝牙连接（硬件控制）" class="headerlink" title="蓝牙连接（硬件控制）"></a>蓝牙连接（硬件控制）</h3><p>下面我们增加一个外部控制开关来实现，通过外部开关控制外投音频的音量（静音和打开）。</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-18-12-08-12.png" alt=""></p><p>当开关 S1 拨下时，LED1 会亮起，此时 S 端（PIN12/GPIO18）为低电位。我们只需要读取 P12 的信号就可以知道开关是否被按下了，程序如下：</p><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> execSync = <span class="built_in">require</span>(<span class="string">'child_process'</span>).execSync;</span><br><span class="line"><span class="keyword">const</span> Gpio = <span class="built_in">require</span>(<span class="string">'rpio2'</span>).Gpio;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化 PIN12</span></span><br><span class="line"><span class="keyword">const</span> button = <span class="keyword">new</span> Gpio(<span class="number">12</span>);</span><br><span class="line">button.open(Gpio.INPUT);</span><br><span class="line"></span><br><span class="line">button.on(<span class="string">'rising'</span>, () =&gt; &#123;</span><br><span class="line">  execSync(<span class="string">'pactl set-sink-volume 1 100%'</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'open sound'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">button.on(<span class="string">'falling'</span>, () =&gt; &#123;</span><br><span class="line">  execSync(<span class="string">'pactl set-sink-volume 1 0%'</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'mute'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">process.on(<span class="string">"SIGINT"</span>, () =&gt; &#123;</span><br><span class="line">  button.close();</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'shutdown!'</span>);</span><br><span class="line">  process.exit(<span class="number">0</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><p>程序并不优雅，但是要实现的功能大致就是这个意思。这段程序看似没有问题，不知道是系统问题还是 rpio2 这个库的问题，在接收上升沿和下降沿信号时经常让板子宕机，这个问题还需要好好研究下。</p><hr><p>花了好几个小时来回折腾，完成了这个实验性的小玩具，生活中我肯定不会用它，因为它过于简陋。这里我还给自己加了一道拓展题，如何识别多次按钮点击，然后根据点击的次数执行不同任务，结果写出来的程序，当按钮按下时，系统总是奔溃，就没有继续了，感兴趣的读者可以尝试下~</p>]]></content>
+      
+      <categories>
+          
+          <category> 硬件开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 树莓派 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>系列 - 认识树莓派 GPIO（三）</title>
+      <link href="/blog/2018/06/16/rasyberry-pi-gpio/"/>
+      <content type="html"><![CDATA[<p>本来这篇文章是不存在的，在写<a href="/blog/2018/06/18/rasyberry-pi-playback/">《系列 - 树莓派外接蓝牙音箱（四）》</a>的时候，发现还是得先解释下 GPIO。</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-17-19-55-28.jpg" alt=""></p><p>看到上图，不少同学都会一脸懵逼，各种引脚怎么连线组成电路？电路中用到的电阻、电容、电抗等等改如何使用？其实，大多数情况下，我们并不需要去设计复杂的电路，最多就是给一个元件两端增加电压时，为确保元件不短路，在串联的电路上再加一个负载电阻，如此而已。那么滤波、放大等电路的设计，一时半会儿还不会用到。</p><h3 id="看图识引脚"><a href="#看图识引脚" class="headerlink" title="看图识引脚"></a>看图识引脚</h3><p>树莓派除了有 USB、网口、HDMI 等常见的接口外，还提供了 GPIO（General Purpose Input/Output）接口，通过这个接口，我们可以很方便的控制电子元器件。本文不去分析 I2C、UART、SPI 这些略复杂的通讯协议，只去看 GPIO 在引脚上的输入和输出，以及高低点位的变化。</p><p>上图所示的几个基础引脚我们还是可以一眼看明白的，DC Power 5.0v，以及 DC Power 3.3v，它们指的是直流电电压 5.0 或 3.3 伏特，可以简单理解成电池的正极，在图中可以看出 PIN01 和 PIN17 两个引脚输出的是 3.3v 电压，PIN02 和 PIN04 输出的是 5.0v 电压；还有好几个 Ground 引脚，它们直接接地，可以理解成电池的负极。</p><p>PIN 引脚标号和 GPIO 标号是不一样的，不要把 GPIO12 理解成了是 PIN12，PINX 是物理位置，GPIOX 是引脚号码。图中引脚 Name 用灰色括号标注的内容是我们暂不去理解的 I2C、SPI 等协议会用到的引脚。</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-17-22-19-11.png" alt=""></p><p>上图是 Raspberry Pi 3 Model B+ 的板子，右侧 40 个引脚，与第一张 GPIO Header 图是一一对应的。</p><h3 id="串口编程"><a href="#串口编程" class="headerlink" title="串口编程"></a>串口编程</h3><p>在树莓派系统中，已经实现了文件到 GPIO 引脚的对应，也就是说，只要我们去修改系统中指定的文件和文件状态，就可以修改 GPIO 引脚的电位状态。</p><p>SSH 远程到树莓派，进入 <code>/sys/class/gpio/</code> 目录，可以看到目录中有两个关键的文件：</p><ul><li><code>export</code>，enable 控制某个引脚</li><li><code>unexport</code>，disbale 控制某个引脚</li></ul><p>它们可以用来控制引脚的状态。比如，我们要控制 GPIO14 引脚，可以将它的状态设置为 out（分为 in 和 out 两种模式，in 是接受电位信号，out 是输出电位信号），然后将它设置为高电位（1 为高电位，0 为低电位）。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># enable GPIO14</span></span><br><span class="line"><span class="built_in">echo</span> 14 &gt; /sys/class/gpio/<span class="built_in">export</span></span><br><span class="line"><span class="comment"># 注意观察，在 /sys/class/gpio/ 目录下多了一个文件夹 gpio14</span></span><br><span class="line"><span class="comment"># 将其设置为 out 模式</span></span><br><span class="line"><span class="built_in">echo</span> out &gt; /sys/class/gpio/gpio14/direction</span><br><span class="line"><span class="comment"># 将其设置为高电位</span></span><br><span class="line"><span class="built_in">echo</span> 1 &gt; /sys/class/gpio/gpio14/value</span><br></pre></td></tr></table></figure><h3 id="电位测试"><a href="#电位测试" class="headerlink" title="电位测试"></a>电位测试</h3><p>在系列第一篇中，有提到，我买了一堆感应器，其中有一个叫做 <code>TWO-COLOR Module</code>，大小双色模块，</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-17-22-33-44.png" alt=""></p><p>上方是共阴模块，下方是共阳模块，共阳的意思就是 B/R/G 都接负极，C 接正极；它的电路结构如下：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-17-22-28-27.png" alt=""></p><p>现在我们来测试下 GPIO14 引脚的电位输出，PIN06 是 Ground，也就是接地负极；而 GPIO14（PIN08 引脚） 由于之前的操作，我们已经将它设置成了高电位。将 C 与 Ground 连接，R 与 GPIO14 连接后，R（红灯）会亮，我们试试：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-17-22-38-39.jpg" alt=""></p><p>然后将 GPIO14 设置为低电位，测试等是否灭掉：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 将 gpio14 设置为高电位</span></span><br><span class="line"><span class="built_in">echo</span> 1 &gt; /sys/class/gpio/gpio14/value</span><br></pre></td></tr></table></figure><p>此时二极管两侧电压为 0，灯灭，测试完成；最后我们把 gpio14 引脚关掉：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 14 &gt; /sys/class/gpio/unexport</span><br></pre></td></tr></table></figure><h3 id="程序控制引脚"><a href="#程序控制引脚" class="headerlink" title="程序控制引脚"></a>程序控制引脚</h3><p>既然 Linux 串口 Bash 编程可以控制 GPIO 引脚的信号，自然也可以用高级语言去控制。下面我们使用 Nodejs 写一个小 Demo —— 让双色模块的红灯和绿灯，每隔 1s 交替闪动。</p><p>简单画一下电路图：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-17-22-56-34.png" alt=""></p><p>GPIO18 和 GPIO23 引脚分别连接共阴双色模块的红色（R）和绿色（G）二极管，然后开始编程。Python 非常适合进行串口编程，而且社区上有很多 Python 库，但本系列会尽量不使用 Python，而是 Nodejs；Nodejs 在这个领域的社区沉淀还不是很多，通过一段时间的摸索，也期望可以沉淀些有用的模块出来。</p><p>为方便测试，就直接使用了月影封装的 rpio2 模块，他的 API 设计得比较符合人性：</p><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> Gpio = <span class="built_in">require</span>(<span class="string">'rpio2'</span>).Gpio;</span><br><span class="line"><span class="comment">// 初始化 PIN12，与 R 连接，设置为输出高电位</span></span><br><span class="line"><span class="keyword">const</span> r = <span class="keyword">new</span> Gpio(<span class="number">12</span>);</span><br><span class="line">r.open(Gpio.OUTPUT, Gpio.HIGH);</span><br><span class="line"><span class="comment">// 初始化 PIN 16，与 G 连接，设置为输出低电位</span></span><br><span class="line"><span class="keyword">const</span> g = <span class="keyword">new</span> Gpio(<span class="number">16</span>);</span><br><span class="line">g.open(Gpio.OUTPUT, Gpio.LOW);</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">wait</span>(<span class="params">seconds</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      resolve();</span><br><span class="line">    &#125;, (seconds || <span class="number">1</span>) * <span class="number">1E3</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'start!'</span>);</span><br><span class="line">  <span class="keyword">let</span> counter = <span class="number">10</span>;</span><br><span class="line">  <span class="keyword">while</span>(counter--) &#123;</span><br><span class="line">    <span class="keyword">await</span> wait();</span><br><span class="line">    r.toggle();</span><br><span class="line">    g.toggle(); </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main().then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  r.close();</span><br><span class="line">  g.close();</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'shutdown!'</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><p>代码比较好理解，每隔 1s 交替闪灯，总共闪 10 次。Demo 效果预览：</p><video src="/blogimgs/2018/06/raspberry-two-colors.mp4" controls height="500"></video><hr><p>对于 GPIO 的介绍就到这里，基础的使用实在是太简单了，本文可以勾起一些对硬件完全不了解的同学的好奇心和求知欲，不过对我这个电信出身的同学而言，就没啥值得兴奋的了。</p>]]></content>
+      
+      <categories>
+          
+          <category> 硬件开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 树莓派 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>系列 - 树莓派装机（二）</title>
+      <link href="/blog/2018/06/14/rasyberry-pi-os/"/>
+      <content type="html"><![CDATA[<p>似乎市面上的文章都是教大家如何在 Windows 环境下玩树莓派，Mac 下的文章零零散散的，稍微少了些，我打算所有的环节都在 Mac 上完成，记录下每一次探索遇到的坑。本节将给大家介绍，如何从树莓派上进入到自己熟悉的远程开发模式。</p><h3 id="散热装置"><a href="#散热装置" class="headerlink" title="散热装置"></a>散热装置</h3><p>在开搞之前，我觉得还是需要给树莓派贴上几块散热片，再把风扇装上；否则，插上电源，啥也不干，板子便会发烫。</p><p><strong>散热片</strong><br><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-16-04-22.jpg" alt=""></p><p>我买的这个板子，CPU 自带散热，所以这三块散热片应该分别装在 WiFi/蓝牙模块、以太网卡和内存片（背面）上。</p><p><strong>小风扇</strong><br><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-16-04-41.jpg" alt=""></p><p>小风扇两个引脚与树莓派的引脚相连，黑色接地，红色接 Vcc 5.0V。然后放进壳子里，就是这样啦：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-16-23-58.jpg" alt=""></p><p>小风扇无声地转起来了。</p><h3 id="系统安装"><a href="#系统安装" class="headerlink" title="系统安装"></a>系统安装</h3><p>首先，通过 Mac 自带的 Disk 工具格式化储存卡：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-16-44-53.jpg" alt=""></p><p>注意，这里的格式是 MS-DOS(FAT)，能否设置成其他格式，没研究，格式化完成以后卸载分区：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 找到磁盘对应的 Filesystem 名（DISKNAME）</span></span><br><span class="line">df -h</span><br><span class="line"><span class="comment"># 卸载分区，这里的 DISKNAME 长得像 /dev/disk2s1 </span></span><br><span class="line">diskutil unmout DISKNAME</span><br><span class="line"><span class="comment"># 找到磁盘，看磁盘大小区分</span></span><br><span class="line">diskutil list</span><br><span class="line"><span class="comment"># list 命令结果</span></span><br><span class="line">/dev/disk2 (external, physical):</span><br><span class="line">   <span class="comment">#:     TYPE NAME                          SIZE       IDENTIFIER</span></span><br><span class="line">   0:     FDisk_partition_scheme             *15.9 GB   disk2</span><br><span class="line">   1:     DOS_FAT_32 BARRET-PI               15.9 GB    disk2s1</span><br></pre></td></tr></table></figure><p>然后先去官网下载 raspberrypi 的 <a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank" rel="noopener">操作系统</a>，直接下载系统貌似略慢，可以下载 torrent，然后使用迅雷下载。</p><p>下载下来的是一个 zip 包，解压后，执行下方命令，将镜像写入到磁盘：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># dd 命令用于转换或者复制一个文件</span></span><br><span class="line"><span class="comment"># bs 是 benchmark 测试</span></span><br><span class="line"><span class="comment"># if 是镜像地址</span></span><br><span class="line"><span class="comment"># of 是写入磁盘区间</span></span><br><span class="line">sudo dd bs=4m <span class="keyword">if</span>=2018-04-18-raspbian-stretch.img of=/dev/rdisk2</span><br><span class="line"><span class="comment"># 磁盘写入完成以后</span></span><br><span class="line">diskutil unmountDisk /dev/disk2</span><br></pre></td></tr></table></figure><p>整个写入操作，花了 8 分多钟——真是够慢——只能说店家送的这个 SD 卡略烂吧。给树莓派插上 SD 卡，然后插上电源，注意观察红灯和绿灯的闪灯，红灯应该只一直亮着，绿灯在前几十秒亮着，等到系统加载成功，绿色会快速闪动然后灭掉。如果你的等不是这么闪的，那么有可能遇到了这么几种情况：</p><ul><li>你的树莓派板子坏了，概率比较小</li><li>你的板子跟系统不匹配，重新找个系统吧，最好去官网下载</li><li>你的 SD 卡与板子不兼容，这里是所有可以用的 SD 卡<a href="https://elinux.org/RPi_SD_cards" target="_blank" rel="noopener">列表</a></li></ul><h3 id="连接系统"><a href="#连接系统" class="headerlink" title="连接系统"></a>连接系统</h3><p>在 Mac 下通过网线连接树莓派，你需要这个转换器：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-17-12-51.jpg" alt=""></p><p>树莓派提供了 DHCP 服务，我们可以让 Mac 连接到树莓派局域网，依次打开 <code>System Preferences -&gt; Sharing -&gt; Internet Sharing</code>，勾选 <code>Thunderbolt Ethernet</code> 后在勾选 <code>Internet Sharing</code>，此时你的 Mac 就会自动连接树莓派了，然后找到树莓派对应的 IP，通过 ssh 连接上去就行了。</p><p><strong>「然后找到树莓派对应的 IP，通过 ssh 连接上去就行了」，注意，这里有很多坑…</strong></p><p>可能是因为缓存的原因吧，在 Mac 上执行 <code>arp -a</code> 不一定能找到 raspberry 设备；所以，我建议你还是去下载一个 IP 扫描的工具，它会清楚地告诉你 IP 是多少：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-18-22-41-49.png" alt=""></p><p><code>ssh pi@192.168.2.2</code> 你会发现连接不上，提示 <code>Connection refused</code>，网上找了下，不少人被坑：</p><blockquote><p>树莓派最新的 raspberry 系统（2016.11.25日更新的系统）默认是关闭 ssh 功能的，如果可以连接屏幕，进入系统开启即可。<br>如果只能连 ssh，先将 sd 卡取出，插入电脑，在 boot 分区新建个ssh文件夹即可，包括完整版和 lite 版。</p></blockquote><p>好吧，只能说，“板子，我服你~”。最后看到了这个界面，心情就舒畅多了：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-18-13-07.png" alt=""></p><h3 id="自动-WiFi-链接"><a href="#自动-WiFi-链接" class="headerlink" title="自动 WiFi 链接"></a>自动 WiFi 链接</h3><p>执行 <code>iwlist scan</code> 对于没有无线网卡驱动的板子，会提示错误，当然也可能是没有打开 WiFi，可以通过 <code>sudo ifup wlan0</code> 开启。</p><p>自动 WiFi 链接分为两步，首先将 <code>/etc/network/interfaces</code> 中的手动连接修改成自动，修改方式：</p><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="deletion">- iface wlan0 inet manual</span></span><br><span class="line"><span class="deletion">- wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf</span></span><br><span class="line"><span class="addition">+ iface wlan0 inet dhcp</span></span><br><span class="line"><span class="addition">+ wpa_conf /etc/wpa_supplicant/wpa_supplicant.conf</span></span><br></pre></td></tr></table></figure><p>第二步，在 <code>/etc/wpa_supplicant/wpa_supplicant.conf</code> 中设置需要连接的 WiFi 名和密码：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nework=&#123;</span><br><span class="line">[TAB]ssid=<span class="string">"WIFI_NAME"</span></span><br><span class="line">[TAB]psk=<span class="string">"WIFI_PASSWORD"</span></span><br><span class="line">[TAB]priority=1</span><br><span class="line">&#125;</span><br><span class="line">nework=&#123;</span><br><span class="line">[TAB]ssid=<span class="string">"WIFI_NAME_2"</span></span><br><span class="line">[TAB]psk=<span class="string">"WIFI_PASSWORD_2"</span></span><br><span class="line">[TAB]priority=2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这里的 <code>[TAB]</code> 为 tab 符号输入；可以设置多个 WiFi，其中 priority 为优先级，<strong>直接在文件后加入这些配置，原有的内容不要动</strong>。</p><p>这里需要注意的是，如果你的板子正通过网线与电脑连接，此时 eth0 已经处于链接状态，wlan0 是无法连接的；需要你断开网线，然后重启板子，才能连接 WiFi。</p><hr><p>好吧，今天就折腾到这里，下一节，我们来看一看如何通过外接的蓝牙音箱播放树莓派音乐。</p>]]></content>
+      
+      <categories>
+          
+          <category> 硬件开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 树莓派 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>系列 - 入坑树莓派（一）</title>
+      <link href="/blog/2018/06/12/rasyberry-pi-start/"/>
+      <content type="html"><![CDATA[<p>树莓派，是一款基于 Linux 的单板机，配上一些可交互的硬件设备（扩展屏、鼠标、键盘等），也就成了一款配置略低的电脑。</p><h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>电脑能做什么事情不必多说，倘若买一块树莓派的板子就是为了玩软件、学习 Linux 系统，那就有点太无趣了；我的目标是通过树莓派深入了解它的 IO 引脚控制（包括几个总线通讯协议）及各类硬件传感器的使用，尝试写写 Linux 内核驱动，再顺便回顾下大学里学的电路原理课程，最终目的是通过各种软硬件的组合实现一些小创意，帮助改善生活质量。</p><p>当然，我可以去直接网上购买智能家具家电，不过其中的趣味想必就少了许多，而且脑海中的一些创意还没有被小米这样的厂商产品化，只能自己动手实现啦~</p><h3 id="趣味和挑战"><a href="#趣味和挑战" class="headerlink" title="趣味和挑战"></a>趣味和挑战</h3><p>从正式接触编程到如今，也有 7 个年头了，Linux 系统，包括系统上的各种环境配置、软件使用，可以说熟悉的不能再熟悉了，我对系统底层的东西（系统、内核）兴趣度不高，所以把应用层尤其是软件摸索的差不多了，Linux 也就用的少了，毕竟它不适合平时办公和娱乐。</p><p>树莓派提供的 IO 引脚可以直接控制底层硬件，通过硬件的配套驱动，可以在操作系统层做很多非常有意思的软硬件联动开发，相比单纯把玩应用层和协议层的东西，能够控制实物硬件，还是很有趣味性的。不过有趣的同时，也会有很多挑战，比如电路设计、驱动开发、硬件通讯协议的研究等等。</p><h3 id="上货"><a href="#上货" class="headerlink" title="上货"></a>上货</h3><p>没做太多的调研，问了下身边搞 IoT 开发的同事，让他直接推了几个淘宝链接。</p><p><strong>一个 Raspberry Pi 3 Model B+ Linux 开发板</strong></p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-15-19-41.jpg" alt=""></p><p><strong>一盒子感应器，三四十个</strong></p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-15-20-29.jpg" alt=""></p><p>上面的硬件，淘宝上随随便便就可以搜到，没什么太大的差异，就不贴链接了，如果一定要推荐，可以在 <a href="https://www.raspberrypi.org/products/#buy-now-modal" target="_blank" rel="noopener">官方授权的淘宝店</a> 上购买。我们来看看这块<strong>板子的配置</strong>：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/06/2018-06-12-16-00-28.png" alt=""></p><p>这块最新的树莓派板载蓝牙和 WiFi 模块，而且各方面的性能都还不错，提供了 4 个 USB 接口和一个全尺寸的 HDMI 接口，基本上可以满足我们的日常开发需求。</p><h3 id="期望"><a href="#期望" class="headerlink" title="期望"></a>期望</h3><p>在小米商城买了四五十件智能产品，说实话，小米的产品确实不错，提供的米家 APP 操作起来也十分方便，但是小米的智能家电无法对外提供服务，只能在小米的体系内运转，因此就显得过于薄弱了些。</p><p>把玩树莓派，我大致给自己定下这么几个目标：</p><ul><li>熟练使用 GPIO 和各类总线协议进行硬件和设备的连接、控制</li><li>了解常见的标准数据传输协议，如蓝牙传输、红外遥控、AirPlay 等</li><li>掌握基本的 Linux 内核驱动开发的过程，并尝试为硬件编写驱动程序</li><li>了解边缘计算的整体架构，将家里的所有设备集结在一个端上控制，争取上云</li></ul><hr><p>下一节来说说，如何进入到自己熟悉的远程开发模式。</p>]]></content>
+      
+      <categories>
+          
+          <category> 硬件开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 树莓派 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>中银国际提款到香港招行一卡通</title>
       <link href="/blog/2018/05/30/%E4%B8%AD%E9%93%B6%E5%9B%BD%E9%99%85%E6%8F%90%E6%AC%BE%E5%88%B0%E9%A6%99%E6%B8%AF%E6%8B%9B%E8%A1%8C%E4%B8%80%E5%8D%A1%E9%80%9A/"/>
-      <content type="html"><![CDATA[<p>用过中银国际的人都知道，它是一个很渣的平台，至于渣到什么程度，有机会你可以去体会一下。</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/05/30/transfer-money.png" alt="提款"></p><p>如果你从来没有玩过股票（或炒币）、没有换过汇，折腾起来还是有点费力的，下面我用通俗一点的话来简单说一说大致的流程。</p><h3 id="交易"><a href="#交易" class="headerlink" title="交易"></a>交易</h3><p>我们把交易的前置流程省略掉 —— 默认你不会傻到把钱转入中银国际，然后在这个渣平台上购买股票。</p><p>在中银国际上支持美元、港元和人民币交易，交收日是 <code>T+2</code>，比如你当天卖出股票，两天后钱才会到账，这两天中你的钱会出现在「未交收金额」一栏中，不可用。</p><p>如果你点子比较低，遇到了他们的公众假期或者周六、周日，那么对不起，T+2，就会变成 <code>T+2+假期时间</code>，往后顺延…</p><h3 id="提现"><a href="#提现" class="headerlink" title="提现"></a>提现</h3><p>先说说你有香港银行卡的情况，如果你有香港的银行卡，提现就稍微方便一点。</p><p>首先，你需要去它的官网上下载一份 <a href="http://www.bocionline.com/files/Change_of_Personal_Particular_and_AE_Form.pdf" target="_blank" rel="noopener">PDF 文档</a>，填写你的香港银行卡信息，然后拍照发送到 <a href="mailto:service@bocigroup.com" target="_blank" rel="noopener">service@bocigroup.com</a>，大概一周左右可以完成香港银行卡的绑定。</p><p>绑定好了以后，在你的中银国际提款界面就可以发现香港银行卡的选项了。提现需要 1~2 天，如果遇到公休日，顺延…</p><p>如果你没有香港银行卡，你需要下载一份 <a href="http://www.bocionline.com/files/payment_instruction_en.pdf" target="_blank" rel="noopener">PDF 文档</a>，填写你的转账信息，然后拍照发到上面那个邮箱，到时候会扣你 200 港元或者 25 美金的电汇手续费，然后等待 3~5 天完成提现。</p><h3 id="换汇"><a href="#换汇" class="headerlink" title="换汇"></a>换汇</h3><p>第一次打开香港一卡通的客户端也是略微有点懵逼的，不过知道各个菜单项是什么意思了，感觉也还好。关于香港一卡通的办理和使用，我之前写过一篇<a href="/blog/2016/07/07/hongkong-cmbchina/">随笔</a>。</p><p>需要注意的是，每人每年只有 5w 刀的的结汇额度，你可以在香港一卡通上把美金/港币换成人民币在转入到国内银行，也可以先转入国内银行再换汇（或者不换汇直接使用）。前者会占用结汇额度，不需要手续费（人民币转账不需要手续费），而美金/港币转账需要收取每笔 11 美金或者 80 港币的手续费。</p><p>大部分情况消费都是人民币，所以你可以在香港一卡通换汇完成后再转入国内。这个过程，没有时延，都是及时到账。</p><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>整个流程，不得不说很折腾，中银国际只有网页客户端，手机 iOS 客户端不支持美元账户操作，而且使用的都是上古风，80 年代的交互模式，特别恶心；所以很多人都会选择把中银国际中的股票转移到富途牛牛类似的客户端上操作，体验真的好多了。</p><p>香港一卡通也有点恶心，客户端只支持 Windows，而且还需要一个 uKey 操作，虽说保证了安全，但是体验也是一坨翔。</p><p>上次更新证书还除了点小毛病，香港专业客户端更新总是失败，客服告诉我先安装招行专业版客户端，更新证书，此操作对香港专业客户端也生效。</p><p>中银国际恶心的地方除了每次要等待几天以外，客服电话也长期占线，排队打不通。如果你有问题，还是建议通过上面提到的邮件沟通，一般都会回复。</p><p>好吧，就记录这么多；读者有什么问题多去问客服吧，或者网上检索下。</p>]]></content>
+      <content type="html"><![CDATA[<p>用过中银国际的人都知道，它是一个很渣的平台，至于渣到什么程度，有机会你可以去体会一下。</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2018/05/30/transfer-money.png" alt="提款"></p><p>如果你从来没有玩过股票（或炒币）、没有换过汇，折腾起来还是有点费力的，下面我用通俗一点的话来简单说一说大致的流程。</p><h3 id="交易"><a href="#交易" class="headerlink" title="交易"></a>交易</h3><p>我们把交易的前置流程省略掉 —— 默认你不会傻到把钱转入中银国际，然后在这个渣平台上购买股票。</p><p>在中银国际上支持美元、港元和人民币交易，交收日是 <code>T+2</code>，比如你当天卖出股票，两天后钱才会到账，这两天中你的钱会出现在「未交收金额」一栏中，不可用。</p><p>如果你点子比较低，遇到了他们的公众假期或者周六、周日，那么对不起，<code>T+2</code>，就会变成 <code>T+2+假期时间</code>，往后顺延…</p><h3 id="提现"><a href="#提现" class="headerlink" title="提现"></a>提现</h3><p>先说说你有香港银行卡的情况，如果你有香港的银行卡，提现就稍微方便一点。</p><p>首先，你需要去它的官网上下载一份 <a href="http://www.bocionline.com/files/Change_of_Personal_Particular_and_AE_Form.pdf" target="_blank" rel="noopener">PDF 文档</a>，填写你的香港银行卡信息，然后拍照发送到 <a href="mailto:service@bocigroup.com" target="_blank" rel="noopener">service@bocigroup.com</a>，大概一周左右可以完成香港银行卡的绑定。</p><p>绑定好了以后，在你的中银国际提款界面就可以发现香港银行卡的选项了。提现需要 1~2 天，如果遇到公休日，顺延…</p><p>如果你没有香港银行卡，你需要下载一份 <a href="http://www.bocionline.com/files/payment_instruction_en.pdf" target="_blank" rel="noopener">PDF 文档</a>，填写你的转账信息，然后拍照发到上面那个邮箱，到时候会扣你 200 港元或者 25 美金的电汇手续费，然后等待 3~5 天完成提现。</p><h3 id="换汇"><a href="#换汇" class="headerlink" title="换汇"></a>换汇</h3><p>第一次打开香港一卡通的客户端也是略微有点懵逼的，不过知道各个菜单项是什么意思了，感觉也还好。关于香港一卡通的办理和使用，我之前写过一篇<a href="/blog/2016/07/07/hongkong-cmbchina/">随笔</a>。</p><p>需要注意的是，每人每年只有 5w 刀的的结汇额度，你可以在香港一卡通上把美金/港币换成人民币（这个过程成为之换汇）再转入到国内银行，也可以先转入国内银行再换汇（或者不换汇直接使用）。前者会占用结汇额度，不需要手续费（人民币转账不需要手续费），而美金/港币转账需要收取每笔 11 美金或者 80 港币的手续费。</p><p>大部分情况消费都是人民币，所以你可以在香港一卡通换汇完成后再转入国内。这个过程，没有时延，都是及时到账。</p><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>整个流程，不得不说很折腾，中银国际只有网页客户端，手机 iOS 客户端不支持美元账户操作，而且使用的都是上古风，80 年代的交互模式，特别恶心；所以很多人都会选择把中银国际中的股票转移到富途牛牛类似的客户端上操作，体验真的好多了。</p><p>香港一卡通也有点恶心，客户端只支持 Windows，而且还需要一个 uKey 操作，虽说保证了安全，但是体验也是一坨翔。</p><p>上次更新证书还除了点小毛病，香港专业客户端更新总是失败，客服告诉我先安装招行专业版客户端，更新证书，此操作对香港专业客户端也生效。</p><p>中银国际恶心的地方除了每次要等待几天以外，客服电话也长期占线，排队打不通。如果你有问题，还是建议通过上面提到的邮件沟通，一般都会回复。</p><p>好吧，就记录这么多；读者有什么问题多去问客服吧，或者网上检索下。</p>]]></content>
       
       <categories>
           
@@ -344,9 +424,9 @@
       
         <tags>
             
-            <tag> HSTS </tag>
-            
             <tag> HTTPS </tag>
+            
+            <tag> HSTS </tag>
             
         </tags>
       
@@ -2369,30 +2449,6 @@
     </entry>
     
     <entry>
-      <title>this的指向</title>
-      <link href="/blog/2015/04/13/this-reference/"/>
-      <content type="html"><![CDATA[<p>网友问题：</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">"The Window"</span>;   </span><br><span class="line">　　<span class="keyword">var</span> object = &#123;  </span><br><span class="line">　　　　name : <span class="string">"My Object"</span>,  </span><br><span class="line">　　　　getNameFunc : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;  </span><br><span class="line">　　　　　　　　<span class="keyword">return</span> <span class="keyword">this</span>.name;  </span><br><span class="line">　　　　&#125;   </span><br><span class="line">&#125;;  </span><br><span class="line"><span class="keyword">var</span> a = object.getNameFunc;</span><br><span class="line">alert(a());</span><br><span class="line">alert(object.getNameFunc());</span><br></pre></td></tr></table></figure><p>原因：</p><p><code>object.getNameFunc()</code> ，此时的 <code>object.getNameFunc</code> 为引用类型，其 base 为 <code>object</code>，this 指向的是 base，所以返回 <code>object.name</code> 的值</p><p><code>name = object.getNameFunc</code>, <code>test</code> 作为标识符，生成了其他引用类型的值，此时 base 已经从 <code>object</code> 重置为 <code>null</code>，也就是会指向 global（window），所以返回的是 window.name 的值。</p><p>问题的关键在于「引用类型（type Reference）的中间值发生改变」</p>]]></content>
-      
-      <categories>
-          
-          <category> JavaScript </category>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> this </tag>
-            
-            <tag> reference </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>Xcode-select Error</title>
       <link href="/blog/2015/04/13/xcode-select-error/"/>
       <content type="html"><![CDATA[<p>错误信息：</p><blockquote><p>xcode-select: error: tool ‘xcodebuild’ requires Xcode, but active developer directory ‘/Library/Developer/CommandLineTools’ is a command line tools instance</p></blockquote><p>解决方案：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer</span><br></pre></td></tr></table></figure>]]></content>
@@ -2411,6 +2467,30 @@
             <tag> Xcode </tag>
             
             <tag> Error </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>this的指向</title>
+      <link href="/blog/2015/04/13/this-reference/"/>
+      <content type="html"><![CDATA[<p>网友问题：</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">"The Window"</span>;   </span><br><span class="line">　　<span class="keyword">var</span> object = &#123;  </span><br><span class="line">　　　　name : <span class="string">"My Object"</span>,  </span><br><span class="line">　　　　getNameFunc : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;  </span><br><span class="line">　　　　　　　　<span class="keyword">return</span> <span class="keyword">this</span>.name;  </span><br><span class="line">　　　　&#125;   </span><br><span class="line">&#125;;  </span><br><span class="line"><span class="keyword">var</span> a = object.getNameFunc;</span><br><span class="line">alert(a());</span><br><span class="line">alert(object.getNameFunc());</span><br></pre></td></tr></table></figure><p>原因：</p><p><code>object.getNameFunc()</code> ，此时的 <code>object.getNameFunc</code> 为引用类型，其 base 为 <code>object</code>，this 指向的是 base，所以返回 <code>object.name</code> 的值</p><p><code>name = object.getNameFunc</code>, <code>test</code> 作为标识符，生成了其他引用类型的值，此时 base 已经从 <code>object</code> 重置为 <code>null</code>，也就是会指向 global（window），所以返回的是 window.name 的值。</p><p>问题的关键在于「引用类型（type Reference）的中间值发生改变」</p>]]></content>
+      
+      <categories>
+          
+          <category> JavaScript </category>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> this </tag>
+            
+            <tag> reference </tag>
             
         </tags>
       
@@ -2815,26 +2895,6 @@
     </entry>
     
     <entry>
-      <title>去掉IE11中input右侧的关闭叉叉</title>
-      <link href="/blog/2014/11/17/input-close-btn-in-ie11/"/>
-      <content type="html"><![CDATA[<p>在 IE11 下，浏览器自作多情在 text input 组件上加一个 close 叉叉：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/11/17/825ef988-6e3e-11e4-900a-5fadd3465d94.png" alt="image"></p><p>这么整：</p><pre><code>input::-ms-clear { display: none; } </code></pre><p>这种伪元素类似于 web component.</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> CSS </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>让身体残疾的人可以访问Web</title>
       <link href="/blog/2014/11/17/web-accessibility/"/>
       <content type="html"><![CDATA[<blockquote><p>Web accessibility means that people with disabilities can use the Web.<br><br>让身体残疾的人可以访问Web，这就是 Web Accessibility。</p></blockquote><p>在中国，有数以百万甚至千万计的人无法正常地使用网络，不是因为他们脑子不好使，也不是因为他们没钱没文化，而是他们用来感知这个世界的能力受到了先天或者后天的破坏。WAI（Web Accessibility inititive）这个议题在<a href="http://www.w3.org/WAI/history" target="_blank" rel="noopener">1997年五月份</a>被提上议案，至今已经形成了一个庞大的知识体系。</p><p>残疾人士包括：失明和低视力、失聪和重听、学习障碍、认知障碍、行动不便、言语残疾、光过敏患者和这些病症的复合患者。涉及类别包括：视觉、听觉、身体、语言、认知、语言、学习以及神经残疾。</p><p>事实上，网页无障碍化，其对象不限于残疾人士。如果哪一天你打球手骨折了，你可以感受下无障碍给你带来的便利；如果哪一天你也两鬓霜白，眼力退化、听力退化，网页无障碍化技术就是你的第二双眼睛、第二双耳朵…</p><p>后期我会投入一定的时间研究并推动相关内容。</p>]]></content>
@@ -2851,6 +2911,26 @@
         <tags>
             
             <tag> WAI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>去掉IE11中input右侧的关闭叉叉</title>
+      <link href="/blog/2014/11/17/input-close-btn-in-ie11/"/>
+      <content type="html"><![CDATA[<p>在 IE11 下，浏览器自作多情在 text input 组件上加一个 close 叉叉：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/11/17/825ef988-6e3e-11e4-900a-5fadd3465d94.png" alt="image"></p><p>这么整：</p><pre><code>input::-ms-clear { display: none; } </code></pre><p>这种伪元素类似于 web component.</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CSS </tag>
             
         </tags>
       
@@ -3175,26 +3255,6 @@
     </entry>
     
     <entry>
-      <title>￥符号，少了一横</title>
-      <link href="/blog/2014/08/29/dollar-in-different-face/"/>
-      <content type="html"><![CDATA[<p>跟钱有关的问题。</p><p>数值前加一个 ￥ 符号，可是视觉同学一定要使用两横的 dollar 符号。咋弄？</p><p>这个符号在不同字体下呈现的效果是不一样的，微软雅黑下是两横，不过显示的并不好看，正确的处理方式应该是：</p><pre><code>&lt;style&gt;i {font-family:&quot;Microsoft Yahei&quot;;}&lt;/style&gt;&lt;i&gt;&amp;yen;&lt;/i&gt;</code></pre>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> css </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>评《别太听上司的话》</title>
       <link href="/blog/2014/08/29/be-patient/"/>
       <content type="html"><![CDATA[<p>今天早上逛博客园，看到了一篇吐槽的文章：<a href="http://www.cnblogs.com/beatless/p/3944101.html" target="_blank" rel="noopener">别太听上司的话</a>，有些感触：</p><p>给你加任务的，可以称之为需求方。在需求方看来，无论你是前端开发还是后台开发，广义上讲，都是资源，有需求当然也是需要资源的。</p><p>每一个需求过来都应该进行评审，需求方不提，你自己也没有提出来，他们觉得加一点东西或者改一点东西是十分轻松的事情，因为他们不懂技术，可是你懂呀，你需要把排期和难点罗列出来，给出一个相对准确的项目时间，这有啥难度么？</p><p>能力强不等于无敌，有些人会说能力越强责任越重，你可以认为这是忽悠你的借口，不过这也是事实，当你的技术能力和业务能力持平之后，你的工资和职衔也就上去了。</p><p>你说一两年学到的东西还不如两个月的，显然，你指的是技术方面。想必楼主是一个沉醉于技术的人，但是在工作中，技术只是一方面，或许学会做人才是最重要的。</p><p>我也经常会遭遇楼主这样的经历，每每过来都是忍气吞声，但是每一次我都试着去坦然去面对，当然提高了自己跟人 PK 的能力。</p><p>所以，加油吧！</p>]]></content>
@@ -3211,6 +3271,26 @@
             <tag> life </tag>
             
             <tag> work </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>￥符号，少了一横</title>
+      <link href="/blog/2014/08/29/dollar-in-different-face/"/>
+      <content type="html"><![CDATA[<p>跟钱有关的问题。</p><p>数值前加一个 ￥ 符号，可是视觉同学一定要使用两横的 dollar 符号。咋弄？</p><p>这个符号在不同字体下呈现的效果是不一样的，微软雅黑下是两横，不过显示的并不好看，正确的处理方式应该是：</p><pre><code>&lt;style&gt;i {font-family:&quot;Microsoft Yahei&quot;;}&lt;/style&gt;&lt;i&gt;&amp;yen;&lt;/i&gt;</code></pre>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> css </tag>
             
         </tags>
       
@@ -3291,26 +3371,6 @@
     </entry>
     
     <entry>
-      <title>绝对定位，margin:0 auto，让元素竖直居中</title>
-      <link href="/blog/2014/08/07/position-and-margin/"/>
-      <content type="html"><![CDATA[<p><strong>问题：</strong></p><pre><code>div {    margin: auto;    position: absolute;    top: 0;    left: 0;    right: 0    bottom: 0;    width: 100px;    height: 100px;}</code></pre><p>是如何自适应的。</p><p>原因是，绝对定位的布局取决于三个因素，一个是元素的位置，一个是元素的尺寸，一个是元素的margin值。</p><p>没有设置尺寸和 margin 的元素会自适应剩余空间，位置固定则分配尺寸，尺寸固定边会分配 margin，都是自适应的。</p><p>IE7- 的渲染方式不同，渲染规则也不一样，他不会让定位元素去自适应。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> CSS </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>Object + Array</title>
       <link href="/blog/2014/08/07/%7B%7D+%5B%5D/"/>
       <content type="html"><![CDATA[<p><strong>问题：</strong></p><pre><code>{} + []</code></pre><ul><li>{} + [] 结果应该是 0</li><li>console.log({} + []) 结果应该是 object object</li></ul><p>两个 {} 的语义不一样,前者被解析成 {}; +[]; 后者 {} 为对象.</p><ul><li><p>操作符，针对非 Number 的处理内部调用 ToPrimary() 函数, {} 和 [] 都执行了自身的 toString 函数</p><p>({} + [])<br>({}) + []</p></li></ul><p>这些表达式中，{}都被当做对象来解析，而不是 作用块</p>]]></content>
@@ -3325,6 +3385,26 @@
         <tags>
             
             <tag> hack </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>绝对定位，margin:0 auto，让元素竖直居中</title>
+      <link href="/blog/2014/08/07/position-and-margin/"/>
+      <content type="html"><![CDATA[<p><strong>问题：</strong></p><pre><code>div {    margin: auto;    position: absolute;    top: 0;    left: 0;    right: 0    bottom: 0;    width: 100px;    height: 100px;}</code></pre><p>是如何自适应的。</p><p>原因是，绝对定位的布局取决于三个因素，一个是元素的位置，一个是元素的尺寸，一个是元素的margin值。</p><p>没有设置尺寸和 margin 的元素会自适应剩余空间，位置固定则分配尺寸，尺寸固定边会分配 margin，都是自适应的。</p><p>IE7- 的渲染方式不同，渲染规则也不一样，他不会让定位元素去自适应。</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CSS </tag>
             
         </tags>
       
@@ -3573,26 +3653,6 @@
     </entry>
     
     <entry>
-      <title>css选中前一个元素</title>
-      <link href="/blog/2014/04/30/previous-element-with-css/"/>
-      <content type="html"><![CDATA[<p>想了半天没找到 hack 的方式，CSS4 也没有提供类似的方法，不过在以后的草案中可能会出现</p><pre><code>!previous + next {}</code></pre><p>这样选中上一个元素，那么就可以使用</p><p>!* + obj 来选中 obj 的前一个元素了</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> css </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>git切换到远程分支</title>
       <link href="/blog/2014/04/30/switch-branch-in-git/"/>
       <content type="html"><![CDATA[<p>远程仓库 git clone 下来，当你执行 git branch，你只会看到</p><pre><code>* master</code></pre><p>并不会看到其他分支，即便远程仓库上有其他分支，使用</p><pre><code>git branch -va</code></pre><p>可以查看本地+远程分支列表</p><pre><code>* master              0840594 merge master and 1.0.0remotes/origin/1.0.0  743012a &apos;update&apos;remotes/origin/2.0.0  2787838 udpateremotes/origin/HEAD   -&gt; origin/masterremotes/origin/master 0840594 merge master and 1.0.0</code></pre><p>如果想切换到 origin/2.0.0 的分支，我们可以</p><pre><code>git branch remotes/origin/2.0.0</code></pre><p>不过结果并不如意：</p><pre><code>* (detached from origin/2.0.0)master</code></pre><p>git branch 会看到上面的信息，这里还需要一步操作：</p><pre><code>git checkout -b 2.0.0</code></pre><p>-b 的意思是 base，以当前分支为 base，新建一个名叫 2.0.0 的分支，这里当然也可以使用其他的命名。此时再执行 git branch 就能看到：</p><pre><code>$ git br  master* 2.0.0</code></pre><p>就 OK 了~</p><p>最直接的方法是：</p><pre><code>git checkout -t origin/2.0.0</code></pre><p>能够直接新建本地分支，将远程分支提取出来。</p>]]></content>
@@ -3607,6 +3667,26 @@
         <tags>
             
             <tag> git </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>css选中前一个元素</title>
+      <link href="/blog/2014/04/30/previous-element-with-css/"/>
+      <content type="html"><![CDATA[<p>想了半天没找到 hack 的方式，CSS4 也没有提供类似的方法，不过在以后的草案中可能会出现</p><pre><code>!previous + next {}</code></pre><p>这样选中上一个元素，那么就可以使用</p><p>!* + obj 来选中 obj 的前一个元素了</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> css </tag>
             
         </tags>
       
@@ -3831,30 +3911,6 @@
     </entry>
     
     <entry>
-      <title>jekyll编译时报错invalid byte sequence in GBK</title>
-      <link href="/blog/2014/04/26/jekyll-error-when-compile/"/>
-      <content type="html"><![CDATA[<p>找到你的Ruby安装目录，如我的是：D:\Ruby193, 在里面找到文件D:\Ruby193\lib\ruby\gems\1.9.1\gems\jekyll-0.12.0\lib\jekyll\convertible.rb<br>在该文件中找到下面句子：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name))</code></pre><p>将它修改为：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name),:encoding=&gt;&quot;utf-8&quot;)</code></pre><p>然后确保所有带中文字符的markdown文件是无BOM的UTF-8格式即可。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> error </tag>
-            
-            <tag> jekyll </tag>
-            
-            <tag> ruby </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>巧妙交换值</title>
       <link href="/blog/2014/04/26/replace-a-and-b/"/>
       <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
@@ -3879,9 +3935,9 @@
     </entry>
     
     <entry>
-      <title>jekyll中gsub未定义的错误</title>
-      <link href="/blog/2014/04/26/gsup-error-in-atom-file/"/>
-      <content type="html"><![CDATA[<p>今天被 jekyll 编译时的一个问题搞疯了。</p><blockquote><p>Liquid Exception: undefined method `gsub’ for nil:NilClass in atom.xml</p></blockquote><p>上面这个错误，开始以为时jekyll的版本问题，后来又以为时 UIT8 编码错误，再继续折腾，看了很多博客还是没有处理好。</p><p>在 <code>atom.xml</code> 中我写了一句 ，以前一直是这样的啊，没报错。不知道 github pages 的后台 jekyll 编译器是不是做了版本或者其他方面的修改，定位到这个位置之后，把内容改成了</p><pre><code>\{\{ post.excerpt }}\{\{ post.content }} # 改成这个也可以，只是内容太多，我不喜欢</code></pre><p>差不多整了我两个小时，这么点小错误，妹的！</p>]]></content>
+      <title>jekyll编译时报错invalid byte sequence in GBK</title>
+      <link href="/blog/2014/04/26/jekyll-error-when-compile/"/>
+      <content type="html"><![CDATA[<p>找到你的Ruby安装目录，如我的是：D:\Ruby193, 在里面找到文件D:\Ruby193\lib\ruby\gems\1.9.1\gems\jekyll-0.12.0\lib\jekyll\convertible.rb<br>在该文件中找到下面句子：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name))</code></pre><p>将它修改为：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name),:encoding=&gt;&quot;utf-8&quot;)</code></pre><p>然后确保所有带中文字符的markdown文件是无BOM的UTF-8格式即可。</p>]]></content>
       
       <categories>
           
@@ -3895,6 +3951,8 @@
             <tag> error </tag>
             
             <tag> jekyll </tag>
+            
+            <tag> ruby </tag>
             
         </tags>
       
@@ -3919,6 +3977,28 @@
             <tag> tips </tag>
             
             <tag> clip </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>jekyll中gsub未定义的错误</title>
+      <link href="/blog/2014/04/26/gsup-error-in-atom-file/"/>
+      <content type="html"><![CDATA[<p>今天被 jekyll 编译时的一个问题搞疯了。</p><blockquote><p>Liquid Exception: undefined method `gsub’ for nil:NilClass in atom.xml</p></blockquote><p>上面这个错误，开始以为时jekyll的版本问题，后来又以为时 UIT8 编码错误，再继续折腾，看了很多博客还是没有处理好。</p><p>在 <code>atom.xml</code> 中我写了一句 ，以前一直是这样的啊，没报错。不知道 github pages 的后台 jekyll 编译器是不是做了版本或者其他方面的修改，定位到这个位置之后，把内容改成了</p><pre><code>\{\{ post.excerpt }}\{\{ post.content }} # 改成这个也可以，只是内容太多，我不喜欢</code></pre><p>差不多整了我两个小时，这么点小错误，妹的！</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> error </tag>
+            
+            <tag> jekyll </tag>
             
         </tags>
       
@@ -4045,6 +4125,28 @@
     </entry>
     
     <entry>
+      <title>webview中的点击高亮问题</title>
+      <link href="/blog/2014/03/31/tap-highlight-in-webview/"/>
+      <content type="html"><![CDATA[<p>这两天在做一个淘金币的小游戏，测试页面的时候还挺正常的，放到webview（嵌入诸如微信、微博等客户端的网页容器）中就出问题了。</p><p>给元素绑定了一个 tap 事件，点击元素，该元素周边会出现点东西，IOS 中是个半透明的灰色背景，在 android 中出现红色的边框，不仅影响美感，貌似还会影响性能（这点东西渲染出来需要时间，会阻塞 JS 中控制的元素渲染）。</p><p>开始本以为使用 user-select 可以干掉这玩意儿，结果无效，网上寻觅半天之后，找到了问题。</p><p>css 中有个属性叫做 -webkit-tap-highlight-color ，顾名思义，就是点击元素的时候会有一个高亮的效果。当然不能把他称之为 bug，这也是浏览器为了让用户知道你点中了某个东西，给他醒目的提示，算是增强体验，但是在一些场景中，这不仅没有增强体验，还会影响体验。</p><p>解决方案：</p><pre><code>.obj {-webkit-tap-highlight-color:rgba(0,0,0,0);}</code></pre><p>有些机子可能比较坑爹，rgba 这种方式支持的不是很好，我们可以用 transparent 来给他透明化。</p><pre><code>.obj {  -webkit-tap-highlight-color: rgba(0,0,0,0);  -webkit-tap-highlight-color: transparent; /* For some Androids */}</code></pre><p>小小分享。</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> webview </tag>
+            
+            <tag> highlight </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>npm穿墙</title>
       <link href="/blog/2014/03/31/npm-cross-wall/"/>
       <content type="html"><![CDATA[<p>GWF 很给力，很多东西都能墙掉，但是把 npm 也纳入黑名单，不知道 GWFer 是怎么想的。翻墙翻了好多年了，原理其实也挺简单的，proxy 嘛！</p><h3 id="»-方法一"><a href="#»-方法一" class="headerlink" title="» 方法一"></a>» 方法一</h3><p><strong>A)</strong> 国内源，<a href="http://cnpmjs.org" target="_blank" rel="noopener">http://cnpmjs.org</a></p><p>使用方式，你可以在 cmd 中键入 <code>npm install -g cnpm</code>，然后出去吃个饭，如果还没有安装好，那就换个方式：</p><pre><code>npm install -g cnpm --registry=http://r.cnpmjs.org</code></pre><p>registry 参数的作用就是指向需要 download 的仓库。 cnpm 跟国外的 npm 是同步的，只要 npm 有更新，cnpm 就会跟着一起更新。</p><p>当然，你也可以简单点搞：</p><pre><code>npm config set registry=&quot;http://r.cnpmjs.org&quot;</code></pre><p>在配置中直接指定源头，下次就没有必要使用 <code>--registry</code> 参数了。配置好了之后，npm 就指向了国内的仓库。</p><p><strong>B)</strong> 当然，你也可以安装 cnpm，安装好了之后使用 cnpm 来下载文件，其实原理跟上面是一样的，于是你就可以这样了：</p><pre><code>cnpm install -g package_name</code></pre><h3 id="»-方法二"><a href="#»-方法二" class="headerlink" title="» 方法二"></a>» 方法二</h3><p>代理，在配置中设置代理参数：</p><pre><code># 全局路径，也就是 npm install -g，这里 -g 的意义npm config set prefix=&quot;c:\nodejs&quot;# 一般使用 goagent 翻墙，他的默认端口是 8087npm config set proxy=http://127.0.0.1:8087# 设置 https 的代理npm config set https_proxy=http://127.0.0.1:8087# 这个地方记得设置下，别搞了个代理，结果在国内源下载npm config set registry=http://registry.npmjs.org</code></pre><p>这样配置好了之后，打开你的 goagent ，记得一定要打开，不然 npm 必然报错。上面写了一堆，其实没必要跟着写这么多，一句话就可以搞定：</p><pre><code>npm config set proxy=http://127.0.0.1:8087</code></pre><p>为啥呢，npm -g 没必要自己去配置， registry 默认就是 <code>http://registry.npmjs.org</code>，不配置 https_proxy，也走的通，所以就只剩下上面这条命令了。</p><h3 id="»-方法三"><a href="#»-方法三" class="headerlink" title="» 方法三"></a>» 方法三</h3><p>直接下载到本地。</p><p>实在是怕麻烦，就直接把文件 download 下来，然后放到 node_module 之中就行了。如果是全局模块，找到全局 node_module 的位置，然后解压放进去就行了。</p>]]></content>
@@ -4081,28 +4183,6 @@
         <tags>
             
             <tag> talk </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>webview中的点击高亮问题</title>
-      <link href="/blog/2014/03/31/tap-highlight-in-webview/"/>
-      <content type="html"><![CDATA[<p>这两天在做一个淘金币的小游戏，测试页面的时候还挺正常的，放到webview（嵌入诸如微信、微博等客户端的网页容器）中就出问题了。</p><p>给元素绑定了一个 tap 事件，点击元素，该元素周边会出现点东西，IOS 中是个半透明的灰色背景，在 android 中出现红色的边框，不仅影响美感，貌似还会影响性能（这点东西渲染出来需要时间，会阻塞 JS 中控制的元素渲染）。</p><p>开始本以为使用 user-select 可以干掉这玩意儿，结果无效，网上寻觅半天之后，找到了问题。</p><p>css 中有个属性叫做 -webkit-tap-highlight-color ，顾名思义，就是点击元素的时候会有一个高亮的效果。当然不能把他称之为 bug，这也是浏览器为了让用户知道你点中了某个东西，给他醒目的提示，算是增强体验，但是在一些场景中，这不仅没有增强体验，还会影响体验。</p><p>解决方案：</p><pre><code>.obj {-webkit-tap-highlight-color:rgba(0,0,0,0);}</code></pre><p>有些机子可能比较坑爹，rgba 这种方式支持的不是很好，我们可以用 transparent 来给他透明化。</p><pre><code>.obj {  -webkit-tap-highlight-color: rgba(0,0,0,0);  -webkit-tap-highlight-color: transparent; /* For some Androids */}</code></pre><p>小小分享。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> webview </tag>
-            
-            <tag> highlight </tag>
             
         </tags>
       
