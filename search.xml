@@ -2517,30 +2517,6 @@
     </entry>
     
     <entry>
-      <title>Safari不认识type为search的input</title>
-      <link href="/blog/2015/04/03/input-bug-in-safari/"/>
-      <content type="html"><![CDATA[<p>我平时很少测试 safari 和 firefox，系统默认的浏览器被我设置成 chrome.</p><p>昨天切图看到个表单，没用人家写好的组件，那一层套一层的 div 看了就怕，因为不需要做什么扩展，就自己写了个。</p><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"search"</span> <span class="attr">name</span>=<span class="string">"q"</span> <span class="attr">id</span>=<span class="string">"J_Query"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure><p>给 <code>J_Query</code> 写了一些样式，可是…Safari很任性的不认，左改右改搞了五六分钟没反应，火了！</p><p>把 type 改成 text 就好了。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> bug </tag>
-            
-            <tag> CSS </tag>
-            
-            <tag> safari </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>根据访问属性进行差异化数据加载</title>
       <link href="/blog/2015/04/03/detect-first-visit-usr/"/>
       <content type="html"><![CDATA[<p>判断用户是否第一次访问页面，先不说怎么做，想想什么场景下会用到？</p><p>如果我们页面的体积过大，用户第一次访问，会消耗大量的时间(2-5s)去下载页面所需要的资源，给用户带来的体验是很不好的，尤其是移动端的用户。如果我们可以在用户第一次访问的时候只加载主要内容，在这个主要内容中引导用户做更多的加载资源的操作，一方面可以让用户熟悉系统，一方面也给页面加载资源争取了巨量的时间，何乐而不为？！</p><p>我们能最快想到的方案是，使用 cookie ，服务器根据 cookie 的属性（如某个 Tag 的值为 1 或者 0）来判断要给用户呈现什么样的内容，这样做有几点不好：</p><ol><li>需要服务器协助，而很多时候前端对服务器的控制为 0</li><li>cookie在每次网页请求的时候都会附带，浪费 （当然，可以在用户访问一次之后清理这个 cookie，比如服务器端设置 session 值，不过又增加了后端的逻辑负担，而且不靠谱）</li><li>如果用户禁用了 cookie 呢？</li></ol><p>问题有很多，解决问题的方案也不少，针对这个问题，HTML5规范也提供了相应的事件和属性支持。</p><h3 id="如何判断用户是否为第一次访问页面"><a href="#如何判断用户是否为第一次访问页面" class="headerlink" title="如何判断用户是否为第一次访问页面"></a>如何判断用户是否为第一次访问页面</h3><p>当页面加载的时候会触发 onload 事件，完了之后触发 pageShow 事件，pageShow 事件是页面每次加载都会触发的，而 onload 不然。默认情况下，浏览器会缓存当前访问的页面（隐私模式除外，特殊处理，也会缓存，退出隐私模式时，缓存的所有内容全部删除），当用户点击前进或者后退按钮时，浏览器会从缓存中获取内容，这个时候 onload 事件是不会触发的。</p><p>可以这么说：</p><ul><li>如果待加载的页面不存在于缓存中，会触发 onload ，再触发 pageShow</li><li>如果待加载的页面存在于缓存中，不触发 onload，只触发 pageShow</li></ul><p>pageShow 事件对象 event 中有一个属性值，叫做 persisted，如果这个值为 true，则为缓存数据，false，则为第一次加载。</p><h3 id="差异化加载"><a href="#差异化加载" class="headerlink" title="差异化加载"></a>差异化加载</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> body = <span class="built_in">document</span>.body;</span><br><span class="line">body.onpageshow = <span class="function"><span class="keyword">function</span>(<span class="params">evt</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(evt.persisted)&#123;</span><br><span class="line">    <span class="comment">// 如果从缓存加载，该干啥干啥</span></span><br><span class="line">    doSomething();</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 如果用户第一次访问（没有缓存），只加载主体框架</span></span><br><span class="line">    loadMainContent();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><p>在 <code>loadMainContent()</code> 我们可以这样干：</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">funtion loadMainContent()&#123;</span><br><span class="line">  <span class="comment">// 引导用户执行操作，操作一次加载点东西</span></span><br><span class="line">  leadUserDoSomething();</span><br><span class="line">  <span class="comment">// 或者悄悄地缓慢的加载需要的数据</span></span><br><span class="line">  loadDataInQuickMode();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>当然，通过 cookie 或者 pageshow 事件属性判断用户浏览器是否有缓存数据不是最终的解决方案，但这是一种思考模式，可以发散思维~</p>]]></content>
@@ -2561,6 +2537,30 @@
             <tag> javascript </tag>
             
             <tag> first-time-visit </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Safari不认识type为search的input</title>
+      <link href="/blog/2015/04/03/input-bug-in-safari/"/>
+      <content type="html"><![CDATA[<p>我平时很少测试 safari 和 firefox，系统默认的浏览器被我设置成 chrome.</p><p>昨天切图看到个表单，没用人家写好的组件，那一层套一层的 div 看了就怕，因为不需要做什么扩展，就自己写了个。</p><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"search"</span> <span class="attr">name</span>=<span class="string">"q"</span> <span class="attr">id</span>=<span class="string">"J_Query"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure><p>给 <code>J_Query</code> 写了一些样式，可是…Safari很任性的不认，左改右改搞了五六分钟没反应，火了！</p><p>把 type 改成 text 就好了。</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> bug </tag>
+            
+            <tag> CSS </tag>
+            
+            <tag> safari </tag>
             
         </tags>
       
@@ -2895,6 +2895,26 @@
     </entry>
     
     <entry>
+      <title>去掉IE11中input右侧的关闭叉叉</title>
+      <link href="/blog/2014/11/17/input-close-btn-in-ie11/"/>
+      <content type="html"><![CDATA[<p>在 IE11 下，浏览器自作多情在 text input 组件上加一个 close 叉叉：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/11/17/825ef988-6e3e-11e4-900a-5fadd3465d94.png" alt="image"></p><p>这么整：</p><pre><code>input::-ms-clear { display: none; } </code></pre><p>这种伪元素类似于 web component.</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CSS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>让身体残疾的人可以访问Web</title>
       <link href="/blog/2014/11/17/web-accessibility/"/>
       <content type="html"><![CDATA[<blockquote><p>Web accessibility means that people with disabilities can use the Web.<br><br>让身体残疾的人可以访问Web，这就是 Web Accessibility。</p></blockquote><p>在中国，有数以百万甚至千万计的人无法正常地使用网络，不是因为他们脑子不好使，也不是因为他们没钱没文化，而是他们用来感知这个世界的能力受到了先天或者后天的破坏。WAI（Web Accessibility inititive）这个议题在<a href="http://www.w3.org/WAI/history" target="_blank" rel="noopener">1997年五月份</a>被提上议案，至今已经形成了一个庞大的知识体系。</p><p>残疾人士包括：失明和低视力、失聪和重听、学习障碍、认知障碍、行动不便、言语残疾、光过敏患者和这些病症的复合患者。涉及类别包括：视觉、听觉、身体、语言、认知、语言、学习以及神经残疾。</p><p>事实上，网页无障碍化，其对象不限于残疾人士。如果哪一天你打球手骨折了，你可以感受下无障碍给你带来的便利；如果哪一天你也两鬓霜白，眼力退化、听力退化，网页无障碍化技术就是你的第二双眼睛、第二双耳朵…</p><p>后期我会投入一定的时间研究并推动相关内容。</p>]]></content>
@@ -2911,26 +2931,6 @@
         <tags>
             
             <tag> WAI </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>去掉IE11中input右侧的关闭叉叉</title>
-      <link href="/blog/2014/11/17/input-close-btn-in-ie11/"/>
-      <content type="html"><![CDATA[<p>在 IE11 下，浏览器自作多情在 text input 组件上加一个 close 叉叉：</p><p><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/11/17/825ef988-6e3e-11e4-900a-5fadd3465d94.png" alt="image"></p><p>这么整：</p><pre><code>input::-ms-clear { display: none; } </code></pre><p>这种伪元素类似于 web component.</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> CSS </tag>
             
         </tags>
       
@@ -3255,6 +3255,26 @@
     </entry>
     
     <entry>
+      <title>￥符号，少了一横</title>
+      <link href="/blog/2014/08/29/dollar-in-different-face/"/>
+      <content type="html"><![CDATA[<p>跟钱有关的问题。</p><p>数值前加一个 ￥ 符号，可是视觉同学一定要使用两横的 dollar 符号。咋弄？</p><p>这个符号在不同字体下呈现的效果是不一样的，微软雅黑下是两横，不过显示的并不好看，正确的处理方式应该是：</p><pre><code>&lt;style&gt;i {font-family:&quot;Microsoft Yahei&quot;;}&lt;/style&gt;&lt;i&gt;&amp;yen;&lt;/i&gt;</code></pre>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> css </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>评《别太听上司的话》</title>
       <link href="/blog/2014/08/29/be-patient/"/>
       <content type="html"><![CDATA[<p>今天早上逛博客园，看到了一篇吐槽的文章：<a href="http://www.cnblogs.com/beatless/p/3944101.html" target="_blank" rel="noopener">别太听上司的话</a>，有些感触：</p><p>给你加任务的，可以称之为需求方。在需求方看来，无论你是前端开发还是后台开发，广义上讲，都是资源，有需求当然也是需要资源的。</p><p>每一个需求过来都应该进行评审，需求方不提，你自己也没有提出来，他们觉得加一点东西或者改一点东西是十分轻松的事情，因为他们不懂技术，可是你懂呀，你需要把排期和难点罗列出来，给出一个相对准确的项目时间，这有啥难度么？</p><p>能力强不等于无敌，有些人会说能力越强责任越重，你可以认为这是忽悠你的借口，不过这也是事实，当你的技术能力和业务能力持平之后，你的工资和职衔也就上去了。</p><p>你说一两年学到的东西还不如两个月的，显然，你指的是技术方面。想必楼主是一个沉醉于技术的人，但是在工作中，技术只是一方面，或许学会做人才是最重要的。</p><p>我也经常会遭遇楼主这样的经历，每每过来都是忍气吞声，但是每一次我都试着去坦然去面对，当然提高了自己跟人 PK 的能力。</p><p>所以，加油吧！</p>]]></content>
@@ -3271,26 +3291,6 @@
             <tag> life </tag>
             
             <tag> work </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>￥符号，少了一横</title>
-      <link href="/blog/2014/08/29/dollar-in-different-face/"/>
-      <content type="html"><![CDATA[<p>跟钱有关的问题。</p><p>数值前加一个 ￥ 符号，可是视觉同学一定要使用两横的 dollar 符号。咋弄？</p><p>这个符号在不同字体下呈现的效果是不一样的，微软雅黑下是两横，不过显示的并不好看，正确的处理方式应该是：</p><pre><code>&lt;style&gt;i {font-family:&quot;Microsoft Yahei&quot;;}&lt;/style&gt;&lt;i&gt;&amp;yen;&lt;/i&gt;</code></pre>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> css </tag>
             
         </tags>
       
@@ -3371,26 +3371,6 @@
     </entry>
     
     <entry>
-      <title>Object + Array</title>
-      <link href="/blog/2014/08/07/%7B%7D+%5B%5D/"/>
-      <content type="html"><![CDATA[<p><strong>问题：</strong></p><pre><code>{} + []</code></pre><ul><li>{} + [] 结果应该是 0</li><li>console.log({} + []) 结果应该是 object object</li></ul><p>两个 {} 的语义不一样,前者被解析成 {}; +[]; 后者 {} 为对象.</p><ul><li><p>操作符，针对非 Number 的处理内部调用 ToPrimary() 函数, {} 和 [] 都执行了自身的 toString 函数</p><p>({} + [])<br>({}) + []</p></li></ul><p>这些表达式中，{}都被当做对象来解析，而不是 作用块</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> hack </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>绝对定位，margin:0 auto，让元素竖直居中</title>
       <link href="/blog/2014/08/07/position-and-margin/"/>
       <content type="html"><![CDATA[<p><strong>问题：</strong></p><pre><code>div {    margin: auto;    position: absolute;    top: 0;    left: 0;    right: 0    bottom: 0;    width: 100px;    height: 100px;}</code></pre><p>是如何自适应的。</p><p>原因是，绝对定位的布局取决于三个因素，一个是元素的位置，一个是元素的尺寸，一个是元素的margin值。</p><p>没有设置尺寸和 margin 的元素会自适应剩余空间，位置固定则分配尺寸，尺寸固定边会分配 margin，都是自适应的。</p><p>IE7- 的渲染方式不同，渲染规则也不一样，他不会让定位元素去自适应。</p>]]></content>
@@ -3405,6 +3385,26 @@
         <tags>
             
             <tag> CSS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Object + Array</title>
+      <link href="/blog/2014/08/07/%7B%7D+%5B%5D/"/>
+      <content type="html"><![CDATA[<p><strong>问题：</strong></p><pre><code>{} + []</code></pre><ul><li>{} + [] 结果应该是 0</li><li>console.log({} + []) 结果应该是 object object</li></ul><p>两个 {} 的语义不一样,前者被解析成 {}; +[]; 后者 {} 为对象.</p><ul><li><p>操作符，针对非 Number 的处理内部调用 ToPrimary() 函数, {} 和 [] 都执行了自身的 toString 函数</p><p>({} + [])<br>({}) + []</p></li></ul><p>这些表达式中，{}都被当做对象来解析，而不是 作用块</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> hack </tag>
             
         </tags>
       
@@ -3653,26 +3653,6 @@
     </entry>
     
     <entry>
-      <title>git切换到远程分支</title>
-      <link href="/blog/2014/04/30/switch-branch-in-git/"/>
-      <content type="html"><![CDATA[<p>远程仓库 git clone 下来，当你执行 git branch，你只会看到</p><pre><code>* master</code></pre><p>并不会看到其他分支，即便远程仓库上有其他分支，使用</p><pre><code>git branch -va</code></pre><p>可以查看本地+远程分支列表</p><pre><code>* master              0840594 merge master and 1.0.0remotes/origin/1.0.0  743012a &apos;update&apos;remotes/origin/2.0.0  2787838 udpateremotes/origin/HEAD   -&gt; origin/masterremotes/origin/master 0840594 merge master and 1.0.0</code></pre><p>如果想切换到 origin/2.0.0 的分支，我们可以</p><pre><code>git branch remotes/origin/2.0.0</code></pre><p>不过结果并不如意：</p><pre><code>* (detached from origin/2.0.0)master</code></pre><p>git branch 会看到上面的信息，这里还需要一步操作：</p><pre><code>git checkout -b 2.0.0</code></pre><p>-b 的意思是 base，以当前分支为 base，新建一个名叫 2.0.0 的分支，这里当然也可以使用其他的命名。此时再执行 git branch 就能看到：</p><pre><code>$ git br  master* 2.0.0</code></pre><p>就 OK 了~</p><p>最直接的方法是：</p><pre><code>git checkout -t origin/2.0.0</code></pre><p>能够直接新建本地分支，将远程分支提取出来。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> git </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>css选中前一个元素</title>
       <link href="/blog/2014/04/30/previous-element-with-css/"/>
       <content type="html"><![CDATA[<p>想了半天没找到 hack 的方式，CSS4 也没有提供类似的方法，不过在以后的草案中可能会出现</p><pre><code>!previous + next {}</code></pre><p>这样选中上一个元素，那么就可以使用</p><p>!* + obj 来选中 obj 的前一个元素了</p>]]></content>
@@ -3693,22 +3673,20 @@
     </entry>
     
     <entry>
-      <title>mysqldump的使用</title>
-      <link href="/blog/2014/04/29/useage-of-mysqldump/"/>
-      <content type="html"><![CDATA[<ol><li><p>导出整个数据库<br>mysqldump -u 用户名 -p 数据库名 &gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc &gt; wcnc.sql</code></pre></li><li><p>导出一个表<br>mysqldump -u 用户名 -p 数据库名 表名&gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc users&gt; wcnc_users.sql</code></pre></li><li><p>导出一个数据库结构</p><pre><code>mysqldump -u wcnc -p -d --add-drop-table smgp_apps_wcnc &gt;d:\wcnc_db.sql</code></pre><p>-d 没有数据 –add-drop-table 在每个create语句之前增加一个drop table</p></li><li><p>导入数据库<br>常用source 命令<br>进入mysql数据库控制台，<br>如mysql -u root -p</p><p>mysql&gt;use 数据库<br>然后使用source命令，后面参数为脚本文件（如这里用到的.sql）</p><pre><code>mysql&gt;source d:\wcnc_db.sql</code></pre></li></ol>]]></content>
+      <title>git切换到远程分支</title>
+      <link href="/blog/2014/04/30/switch-branch-in-git/"/>
+      <content type="html"><![CDATA[<p>远程仓库 git clone 下来，当你执行 git branch，你只会看到</p><pre><code>* master</code></pre><p>并不会看到其他分支，即便远程仓库上有其他分支，使用</p><pre><code>git branch -va</code></pre><p>可以查看本地+远程分支列表</p><pre><code>* master              0840594 merge master and 1.0.0remotes/origin/1.0.0  743012a &apos;update&apos;remotes/origin/2.0.0  2787838 udpateremotes/origin/HEAD   -&gt; origin/masterremotes/origin/master 0840594 merge master and 1.0.0</code></pre><p>如果想切换到 origin/2.0.0 的分支，我们可以</p><pre><code>git branch remotes/origin/2.0.0</code></pre><p>不过结果并不如意：</p><pre><code>* (detached from origin/2.0.0)master</code></pre><p>git branch 会看到上面的信息，这里还需要一步操作：</p><pre><code>git checkout -b 2.0.0</code></pre><p>-b 的意思是 base，以当前分支为 base，新建一个名叫 2.0.0 的分支，这里当然也可以使用其他的命名。此时再执行 git branch 就能看到：</p><pre><code>$ git br  master* 2.0.0</code></pre><p>就 OK 了~</p><p>最直接的方法是：</p><pre><code>git checkout -t origin/2.0.0</code></pre><p>能够直接新建本地分支，将远程分支提取出来。</p>]]></content>
       
       <categories>
           
-          <category> 后端杂烩 </category>
+          <category> 前端杂烩 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> mysql </tag>
-            
-            <tag> mysqldump </tag>
+            <tag> git </tag>
             
         </tags>
       
@@ -3733,6 +3711,28 @@
             <tag> JavaScript </tag>
             
             <tag> 解析 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>mysqldump的使用</title>
+      <link href="/blog/2014/04/29/useage-of-mysqldump/"/>
+      <content type="html"><![CDATA[<ol><li><p>导出整个数据库<br>mysqldump -u 用户名 -p 数据库名 &gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc &gt; wcnc.sql</code></pre></li><li><p>导出一个表<br>mysqldump -u 用户名 -p 数据库名 表名&gt; 导出的文件名</p><pre><code>mysqldump -u wcnc -p smgp_apps_wcnc users&gt; wcnc_users.sql</code></pre></li><li><p>导出一个数据库结构</p><pre><code>mysqldump -u wcnc -p -d --add-drop-table smgp_apps_wcnc &gt;d:\wcnc_db.sql</code></pre><p>-d 没有数据 –add-drop-table 在每个create语句之前增加一个drop table</p></li><li><p>导入数据库<br>常用source 命令<br>进入mysql数据库控制台，<br>如mysql -u root -p</p><p>mysql&gt;use 数据库<br>然后使用source命令，后面参数为脚本文件（如这里用到的.sql）</p><pre><code>mysql&gt;source d:\wcnc_db.sql</code></pre></li></ol>]]></content>
+      
+      <categories>
+          
+          <category> 后端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+            <tag> mysqldump </tag>
             
         </tags>
       
@@ -3769,6 +3769,28 @@
     </entry>
     
     <entry>
+      <title>git版本回退操作</title>
+      <link href="/blog/2014/04/28/git-roll-back/"/>
+      <content type="html"><![CDATA[<p>今天 github 上操作遇到了一个很头疼的问题，在某个文件中进行了误操作（有可能是加入了BOM头），diff 没看到差异，但是线上就是不正常显示。修改半天没用，只要回退版本。</p><p>通过 <code>git log</code> 可以查看近期 commit 的信息：</p><pre><code>commit bcdfd65ba3f16a0647e7687f92cca25d51738d2eAuthor: Barret Lee &lt;barret.china@gmail.com&gt;Date:   Mon Apr 28 01:22:27 2014 +0800    now postcommit 69eeaa60c5808c143aabce4d52feb104e2e4591bAuthor: Barret &lt;barret.china@gmail.com&gt;Date:   Sat Apr 26 21:03:48 2014 +0800    fix bugcommit b9e4b8c697d139ec35e17be7dd353f1338e9b92eAuthor: Jing Lee &lt;barret.china@gmail.com&gt;Date:   Sat Apr 26 19:35:37 2014 +0800    Update atom.xml</code></pre><p>commit 后面的一串字符就是 SHA 字符。</p><pre><code>git reset --hard SHA  </code></pre><p>这句命令可以回退到指定版本。不过上传的时候要注意了，如果你是：</p><pre><code>git push -u master origin</code></pre><p>肯定会出现这样的错误提示：</p><pre><code>error: failed to push some refs to &apos;//github.com/barretlee/barretlee.github.io.git&apos;hint: Updates were rejected because the tip of your current branch is behindhint: its remote counterpart. Integrate the remote changes (e.g.hint: &apos;git pull ...&apos;) before pushing again.hint: See the &apos;Note about fast-forwards&apos; in &apos;git push --help&apos; for details.</code></pre><p>原因是你本地版本要落后于服务器上的版本（git reset 回退了嘛），如果想覆盖服务器上版本，应该加 <code>-f</code> ，强制提交，</p><pre><code>git push -u master origin -f</code></pre><p>不过这样的操作要谨慎了，先把修改的位置备份（拿出来，复制到文件夹外），完成上述操作之后再复制回来处理。</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> git </tag>
+            
+            <tag> CMS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>当正则匹配零个字符</title>
       <link href="/blog/2014/04/28/reg-match-null/"/>
       <content type="html"><![CDATA[<pre><code>&quot;something&quot;.match(/\s*(.*?)\s*/)&gt; [&apos;&apos;, &apos;&apos;]&quot;something&quot;.match(/^\s*(.*?)\s*$/)&gt; [&quot;something&quot;, &quot;something&quot;]</code></pre><p>为何前者匹配的结果为空？</p><p>如果你不清楚正则的贪婪模式和非贪婪模式，请先移步<a href="http://www.cnblogs.com/hustskyking/p/how-regular-expressions-work.html#p-2.2" target="_blank" rel="noopener">这里</a>.</p><p>整个匹配分为三步：</p><ol><li>第一个 \s*, 贪婪模式把字符全部吞掉，然后回溯，直到第一个字符任然没找到</li><li>第二步是 .*? 由于是非贪婪模式匹配了一个字符就结束了，继续第三步</li><li>第三步匹配失败，回溯到第二步，那第二步会继续减少吞掉的字符，于是字符数缩减到零。</li></ol><p>可能这么说还是不太清晰，先看看这个对比：<br><img src="//img.alicdn.com/tfs/TB1oyqGa_tYBeNjy1XdXXXXyVXa-300-300.png" data-original="/blogimgs/2014/04/28/7e6c1076-cecb-11e3-823e-640e1b53ca00.jpg" alt="qq20140428195101"></p><p>关于返回结果不是 null 而是 “”，你可以理解为匹配到了零个 a。</p>]]></content>
@@ -3787,28 +3809,6 @@
             <tag> 正则 </tag>
             
             <tag> JavaScript </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>git版本回退操作</title>
-      <link href="/blog/2014/04/28/git-roll-back/"/>
-      <content type="html"><![CDATA[<p>今天 github 上操作遇到了一个很头疼的问题，在某个文件中进行了误操作（有可能是加入了BOM头），diff 没看到差异，但是线上就是不正常显示。修改半天没用，只要回退版本。</p><p>通过 <code>git log</code> 可以查看近期 commit 的信息：</p><pre><code>commit bcdfd65ba3f16a0647e7687f92cca25d51738d2eAuthor: Barret Lee &lt;barret.china@gmail.com&gt;Date:   Mon Apr 28 01:22:27 2014 +0800    now postcommit 69eeaa60c5808c143aabce4d52feb104e2e4591bAuthor: Barret &lt;barret.china@gmail.com&gt;Date:   Sat Apr 26 21:03:48 2014 +0800    fix bugcommit b9e4b8c697d139ec35e17be7dd353f1338e9b92eAuthor: Jing Lee &lt;barret.china@gmail.com&gt;Date:   Sat Apr 26 19:35:37 2014 +0800    Update atom.xml</code></pre><p>commit 后面的一串字符就是 SHA 字符。</p><pre><code>git reset --hard SHA  </code></pre><p>这句命令可以回退到指定版本。不过上传的时候要注意了，如果你是：</p><pre><code>git push -u master origin</code></pre><p>肯定会出现这样的错误提示：</p><pre><code>error: failed to push some refs to &apos;//github.com/barretlee/barretlee.github.io.git&apos;hint: Updates were rejected because the tip of your current branch is behindhint: its remote counterpart. Integrate the remote changes (e.g.hint: &apos;git pull ...&apos;) before pushing again.hint: See the &apos;Note about fast-forwards&apos; in &apos;git push --help&apos; for details.</code></pre><p>原因是你本地版本要落后于服务器上的版本（git reset 回退了嘛），如果想覆盖服务器上版本，应该加 <code>-f</code> ，强制提交，</p><pre><code>git push -u master origin -f</code></pre><p>不过这样的操作要谨慎了，先把修改的位置备份（拿出来，复制到文件夹外），完成上述操作之后再复制回来处理。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> git </tag>
-            
-            <tag> CMS </tag>
             
         </tags>
       
@@ -3911,30 +3911,6 @@
     </entry>
     
     <entry>
-      <title>巧妙交换值</title>
-      <link href="/blog/2014/04/26/replace-a-and-b/"/>
-      <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
-      
-      <categories>
-          
-          <category> JavaScript </category>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> hack </tag>
-            
-            <tag> tips </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>jekyll编译时报错invalid byte sequence in GBK</title>
       <link href="/blog/2014/04/26/jekyll-error-when-compile/"/>
       <content type="html"><![CDATA[<p>找到你的Ruby安装目录，如我的是：D:\Ruby193, 在里面找到文件D:\Ruby193\lib\ruby\gems\1.9.1\gems\jekyll-0.12.0\lib\jekyll\convertible.rb<br>在该文件中找到下面句子：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name))</code></pre><p>将它修改为：</p><pre><code># Returns nothing.    def read_yaml(base, name)      self.content = File.read(File.join(base, name),:encoding=&gt;&quot;utf-8&quot;)</code></pre><p>然后确保所有带中文字符的markdown文件是无BOM的UTF-8格式即可。</p>]]></content>
@@ -3953,6 +3929,28 @@
             <tag> jekyll </tag>
             
             <tag> ruby </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>jekyll中gsub未定义的错误</title>
+      <link href="/blog/2014/04/26/gsup-error-in-atom-file/"/>
+      <content type="html"><![CDATA[<p>今天被 jekyll 编译时的一个问题搞疯了。</p><blockquote><p>Liquid Exception: undefined method `gsub’ for nil:NilClass in atom.xml</p></blockquote><p>上面这个错误，开始以为时jekyll的版本问题，后来又以为时 UIT8 编码错误，再继续折腾，看了很多博客还是没有处理好。</p><p>在 <code>atom.xml</code> 中我写了一句 ，以前一直是这样的啊，没报错。不知道 github pages 的后台 jekyll 编译器是不是做了版本或者其他方面的修改，定位到这个位置之后，把内容改成了</p><pre><code>\{\{ post.excerpt }}\{\{ post.content }} # 改成这个也可以，只是内容太多，我不喜欢</code></pre><p>差不多整了我两个小时，这么点小错误，妹的！</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> error </tag>
+            
+            <tag> jekyll </tag>
             
         </tags>
       
@@ -3983,11 +3981,13 @@
     </entry>
     
     <entry>
-      <title>jekyll中gsub未定义的错误</title>
-      <link href="/blog/2014/04/26/gsup-error-in-atom-file/"/>
-      <content type="html"><![CDATA[<p>今天被 jekyll 编译时的一个问题搞疯了。</p><blockquote><p>Liquid Exception: undefined method `gsub’ for nil:NilClass in atom.xml</p></blockquote><p>上面这个错误，开始以为时jekyll的版本问题，后来又以为时 UIT8 编码错误，再继续折腾，看了很多博客还是没有处理好。</p><p>在 <code>atom.xml</code> 中我写了一句 ，以前一直是这样的啊，没报错。不知道 github pages 的后台 jekyll 编译器是不是做了版本或者其他方面的修改，定位到这个位置之后，把内容改成了</p><pre><code>\{\{ post.excerpt }}\{\{ post.content }} # 改成这个也可以，只是内容太多，我不喜欢</code></pre><p>差不多整了我两个小时，这么点小错误，妹的！</p>]]></content>
+      <title>巧妙交换值</title>
+      <link href="/blog/2014/04/26/replace-a-and-b/"/>
+      <content type="html"><![CDATA[<pre><code>a = 1, b = 2;a = [b, b = a][0];a // 2b // 1</code></pre><p>很巧妙的替换了 a 和 b 的值。</p>]]></content>
       
       <categories>
+          
+          <category> JavaScript </category>
           
           <category> 前端杂烩 </category>
           
@@ -3996,9 +3996,9 @@
       
         <tags>
             
-            <tag> error </tag>
+            <tag> hack </tag>
             
-            <tag> jekyll </tag>
+            <tag> tips </tag>
             
         </tags>
       
@@ -4125,28 +4125,6 @@
     </entry>
     
     <entry>
-      <title>webview中的点击高亮问题</title>
-      <link href="/blog/2014/03/31/tap-highlight-in-webview/"/>
-      <content type="html"><![CDATA[<p>这两天在做一个淘金币的小游戏，测试页面的时候还挺正常的，放到webview（嵌入诸如微信、微博等客户端的网页容器）中就出问题了。</p><p>给元素绑定了一个 tap 事件，点击元素，该元素周边会出现点东西，IOS 中是个半透明的灰色背景，在 android 中出现红色的边框，不仅影响美感，貌似还会影响性能（这点东西渲染出来需要时间，会阻塞 JS 中控制的元素渲染）。</p><p>开始本以为使用 user-select 可以干掉这玩意儿，结果无效，网上寻觅半天之后，找到了问题。</p><p>css 中有个属性叫做 -webkit-tap-highlight-color ，顾名思义，就是点击元素的时候会有一个高亮的效果。当然不能把他称之为 bug，这也是浏览器为了让用户知道你点中了某个东西，给他醒目的提示，算是增强体验，但是在一些场景中，这不仅没有增强体验，还会影响体验。</p><p>解决方案：</p><pre><code>.obj {-webkit-tap-highlight-color:rgba(0,0,0,0);}</code></pre><p>有些机子可能比较坑爹，rgba 这种方式支持的不是很好，我们可以用 transparent 来给他透明化。</p><pre><code>.obj {  -webkit-tap-highlight-color: rgba(0,0,0,0);  -webkit-tap-highlight-color: transparent; /* For some Androids */}</code></pre><p>小小分享。</p>]]></content>
-      
-      <categories>
-          
-          <category> 前端杂烩 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> webview </tag>
-            
-            <tag> highlight </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>npm穿墙</title>
       <link href="/blog/2014/03/31/npm-cross-wall/"/>
       <content type="html"><![CDATA[<p>GWF 很给力，很多东西都能墙掉，但是把 npm 也纳入黑名单，不知道 GWFer 是怎么想的。翻墙翻了好多年了，原理其实也挺简单的，proxy 嘛！</p><h3 id="»-方法一"><a href="#»-方法一" class="headerlink" title="» 方法一"></a>» 方法一</h3><p><strong>A)</strong> 国内源，<a href="http://cnpmjs.org" target="_blank" rel="noopener">http://cnpmjs.org</a></p><p>使用方式，你可以在 cmd 中键入 <code>npm install -g cnpm</code>，然后出去吃个饭，如果还没有安装好，那就换个方式：</p><pre><code>npm install -g cnpm --registry=http://r.cnpmjs.org</code></pre><p>registry 参数的作用就是指向需要 download 的仓库。 cnpm 跟国外的 npm 是同步的，只要 npm 有更新，cnpm 就会跟着一起更新。</p><p>当然，你也可以简单点搞：</p><pre><code>npm config set registry=&quot;http://r.cnpmjs.org&quot;</code></pre><p>在配置中直接指定源头，下次就没有必要使用 <code>--registry</code> 参数了。配置好了之后，npm 就指向了国内的仓库。</p><p><strong>B)</strong> 当然，你也可以安装 cnpm，安装好了之后使用 cnpm 来下载文件，其实原理跟上面是一样的，于是你就可以这样了：</p><pre><code>cnpm install -g package_name</code></pre><h3 id="»-方法二"><a href="#»-方法二" class="headerlink" title="» 方法二"></a>» 方法二</h3><p>代理，在配置中设置代理参数：</p><pre><code># 全局路径，也就是 npm install -g，这里 -g 的意义npm config set prefix=&quot;c:\nodejs&quot;# 一般使用 goagent 翻墙，他的默认端口是 8087npm config set proxy=http://127.0.0.1:8087# 设置 https 的代理npm config set https_proxy=http://127.0.0.1:8087# 这个地方记得设置下，别搞了个代理，结果在国内源下载npm config set registry=http://registry.npmjs.org</code></pre><p>这样配置好了之后，打开你的 goagent ，记得一定要打开，不然 npm 必然报错。上面写了一堆，其实没必要跟着写这么多，一句话就可以搞定：</p><pre><code>npm config set proxy=http://127.0.0.1:8087</code></pre><p>为啥呢，npm -g 没必要自己去配置， registry 默认就是 <code>http://registry.npmjs.org</code>，不配置 https_proxy，也走的通，所以就只剩下上面这条命令了。</p><h3 id="»-方法三"><a href="#»-方法三" class="headerlink" title="» 方法三"></a>» 方法三</h3><p>直接下载到本地。</p><p>实在是怕麻烦，就直接把文件 download 下来，然后放到 node_module 之中就行了。如果是全局模块，找到全局 node_module 的位置，然后解压放进去就行了。</p>]]></content>
@@ -4163,6 +4141,28 @@
             <tag> npm </tag>
             
             <tag> proxy </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>webview中的点击高亮问题</title>
+      <link href="/blog/2014/03/31/tap-highlight-in-webview/"/>
+      <content type="html"><![CDATA[<p>这两天在做一个淘金币的小游戏，测试页面的时候还挺正常的，放到webview（嵌入诸如微信、微博等客户端的网页容器）中就出问题了。</p><p>给元素绑定了一个 tap 事件，点击元素，该元素周边会出现点东西，IOS 中是个半透明的灰色背景，在 android 中出现红色的边框，不仅影响美感，貌似还会影响性能（这点东西渲染出来需要时间，会阻塞 JS 中控制的元素渲染）。</p><p>开始本以为使用 user-select 可以干掉这玩意儿，结果无效，网上寻觅半天之后，找到了问题。</p><p>css 中有个属性叫做 -webkit-tap-highlight-color ，顾名思义，就是点击元素的时候会有一个高亮的效果。当然不能把他称之为 bug，这也是浏览器为了让用户知道你点中了某个东西，给他醒目的提示，算是增强体验，但是在一些场景中，这不仅没有增强体验，还会影响体验。</p><p>解决方案：</p><pre><code>.obj {-webkit-tap-highlight-color:rgba(0,0,0,0);}</code></pre><p>有些机子可能比较坑爹，rgba 这种方式支持的不是很好，我们可以用 transparent 来给他透明化。</p><pre><code>.obj {  -webkit-tap-highlight-color: rgba(0,0,0,0);  -webkit-tap-highlight-color: transparent; /* For some Androids */}</code></pre><p>小小分享。</p>]]></content>
+      
+      <categories>
+          
+          <category> 前端杂烩 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> webview </tag>
+            
+            <tag> highlight </tag>
             
         </tags>
       
